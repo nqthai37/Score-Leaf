@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { PageHeading } from "@/components/page-heading";
+import { AvailableOnCurrentSite } from "@/components/preview-notice";
+export const metadata:Metadata={title:"A plan that works for you."};
+export default function Page(){return <><PageHeading eyebrow="YOUR STUDY SPACE" title={"A plan that works for you."} description={"Your pace, your goal, your next chapter."}/><AvailableOnCurrentSite title={"Keep your learning history with you."} description={"Sign in on the current site to keep cloud progress there. For guest history, export a backup before moving to a new address; this preview cannot read storage from the old site."} section={"settings"}/><section className="panel stage-card"><h2>Moving your progress safely</h2><ol className="preview-steps"><li>Open Study preferences on the current site.</li><li>Export your guest progress and keep the JSON backup.</li><li>Use import here when it becomes available. Cloud users will sign in again on the new address.</li></ol><p className="note">Import and account sign-in will be ready before this preview replaces your current workspace.</p></section></>}

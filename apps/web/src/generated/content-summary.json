@@ -1,0 +1,124 @@
+{
+  "contentVersion": "b762eb4d9648accc",
+  "questions": 246,
+  "groups": 154,
+  "audio": 102,
+  "tests": 10,
+  "vocabulary": 24,
+  "parts": [
+    {
+      "part": 1,
+      "name": "Photographs",
+      "category": "Listening",
+      "questions": 14
+    },
+    {
+      "part": 2,
+      "name": "Question–Response",
+      "category": "Listening",
+      "questions": 36
+    },
+    {
+      "part": 3,
+      "name": "Conversations",
+      "category": "Listening",
+      "questions": 36
+    },
+    {
+      "part": 4,
+      "name": "Talks",
+      "category": "Listening",
+      "questions": 36
+    },
+    {
+      "part": 5,
+      "name": "Incomplete Sentences",
+      "category": "Reading",
+      "questions": 52
+    },
+    {
+      "part": 6,
+      "name": "Text Completion",
+      "category": "Reading",
+      "questions": 36
+    },
+    {
+      "part": 7,
+      "name": "Reading Comprehension",
+      "category": "Reading",
+      "questions": 36
+    }
+  ],
+  "testLibrary": [
+    {
+      "id": 1,
+      "title": "Office essentials",
+      "topic": "Meetings, supplies & everyday work",
+      "questions": 20,
+      "minutes": 20
+    },
+    {
+      "id": 2,
+      "title": "Travel with confidence",
+      "topic": "Reservations, transport & business trips",
+      "questions": 20,
+      "minutes": 20
+    },
+    {
+      "id": 3,
+      "title": "Customer connections",
+      "topic": "Orders, returns & helpful service",
+      "questions": 20,
+      "minutes": 20
+    },
+    {
+      "id": 4,
+      "title": "Events that run smoothly",
+      "topic": "Conferences, schedules & registrations",
+      "questions": 20,
+      "minutes": 20
+    },
+    {
+      "id": 5,
+      "title": "People & opportunities",
+      "topic": "Recruitment, training & workplace policies",
+      "questions": 20,
+      "minutes": 20
+    },
+    {
+      "id": 6,
+      "title": "Products on the move",
+      "topic": "Deliveries, warehouses & suppliers",
+      "questions": 20,
+      "minutes": 20
+    },
+    {
+      "id": 7,
+      "title": "Business by the numbers",
+      "topic": "Invoices, budgets & expense claims",
+      "questions": 20,
+      "minutes": 20
+    },
+    {
+      "id": 8,
+      "title": "Technology at work",
+      "topic": "Technical support, software & online services",
+      "questions": 20,
+      "minutes": 20
+    },
+    {
+      "id": 9,
+      "title": "Spaces that work",
+      "topic": "Facilities, maintenance & local services",
+      "questions": 20,
+      "minutes": 20
+    },
+    {
+      "id": 10,
+      "title": "Ideas into action",
+      "topic": "Marketing, launches & commercial decisions",
+      "questions": 20,
+      "minutes": 20
+    }
+  ]
+}
