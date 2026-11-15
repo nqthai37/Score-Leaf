@@ -47,7 +47,7 @@ const ToeicDomain=(()=>{
    const q=lookup.get(answer.id);if(q.metadata_status!=='reviewed')continue;
    for(const skill of q.skill_tags){if(!skills.has(skill))skills.set(skill,{id:skill,attempts:0,wrong:0});const item=skills.get(skill);item.attempts++;if(!answer.correct)item.wrong++}
   }
-  return {first:{count:first.length,accuracy:accuracy(first)},repeats:{count:repeats.length,accuracy:accuracy(repeats)},skills:[...skills.values()].map(s=>({...s,confidence:s.attempts>=5?'enough-data':'low'}))};
+  return {parts:Array.from({length:7},(_,i)=>{const answers=first.filter(a=>lookup.get(a.id).part===i+1);return {part:i+1,count:answers.length,accuracy:accuracy(answers),confidence:answers.length>=5?'limited':'low'}}),first:{count:first.length,accuracy:accuracy(first)},repeats:{count:repeats.length,accuracy:accuracy(repeats)},skills:[...skills.values()].map(s=>({...s,confidence:s.attempts>=5?'enough-data':'low'}))};
  }
  function reviewSchedule(history,bank,{today,timezone='Asia/Ho_Chi_Minh'}={}){
   const lookup=new Map(bank.map(q=>[q.id,q])),items=new Map(),recall=[];
