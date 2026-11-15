@@ -73,3 +73,5 @@ Thực hiện theo `NEXT_STEPS.md`, với hai điều chỉnh người dùng đ�
 - Có regression tests cho idle/hidden/audio/reload, clock changes, duplicate segments, overlap/source/ownership, chia ngày, import giả, lịch ôn và lỗi mạng/đổi tài khoản. `SYNC_VERIFICATION.md` phân biệt kết quả mô phỏng với nghiệm thu hai thiết bị thật.
 - Hạn chế: active time là ước lượng tương tác, có ngưỡng idle 120s và có thể bỏ khoảng browser bị suspend; source mới có thể chờ lease cũ tối đa 45s. Offline đầy đủ không thuộc phạm vi.
 - AI, React Native và nghiệm thu độc lập nhiều tài khoản/thiết bị thật chưa hoàn tất; không đánh dấu xanh dựa trên CI.
+
+- Public smoke ngày 15/11: Dashboard hiển thị ngân sách active riêng và số câu đến hạn; Progress hiển thị first-answer/spaced recall, ngày due và nhãn legacy estimate. Kiểm tra ở guest cache của trình duyệt QA, không tạo bài mới trong tài khoản học thật. Bản `d85943e` deploy run `43704709867` thành công. Gợi ý trên Progress cũng được giới hạn ít nhất 5 first answers/Part, không dùng số lần lặp để kết luận phần yếu.

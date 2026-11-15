@@ -44,3 +44,5 @@ The user has not supplied two test email accounts and selected automated verific
 Activity is a client interaction estimate, not an anti-cheating signal. A visible unattended tab can accrue up to the 120-second idle threshold. Timer suspension gaps over 5 seconds are discarded. New activity sources may wait up to 45 seconds for a closed source's lease. Unsynced chunks persist separately; a displaced lease cannot silently add its offline time. Deadline and answer grading remain server-controlled.
 
 Legacy/imported durations remain estimates, never daily-budget input. Guest time is a local estimate; it is not imported as trusted cloud activity. No fake claims of hosted two-account acceptance or AI completion.
+
+Public smoke (guest QA): observed active budget, spaced-review count, separate first-answer/recall metrics, due dates and legacy-duration labels after deployment d85943e (run 43704709867, success). No new server attempt was added to the learner account in this iteration.
