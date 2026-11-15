@@ -3,7 +3,7 @@ let QUIZ_CHECKPOINT_KEY='toeic-path-session-v1';
 function newAttemptId(){return 'local-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)}
 function persistQuiz(){
  if(!quiz)return;
- try{localStorage.setItem(QUIZ_CHECKPOINT_KEY,JSON.stringify({version:1,contentVersion:CONTENT_METADATA.content_version,id:quiz.id,kind:quiz.kind,setId:quiz.setId,name:quiz.name,questionIds:quiz.questions.map(q=>q.id),index:quiz.index,answers:quiz.answers,checked:quiz.checked,start:quiz.start,limit:quiz.limit,deadline:quiz.deadline,remote:quiz.remote?{...quiz.remote,revision:quiz.answerQueue.revision,pending:quiz.answerQueue.pending}:null}));queueCloudProgress()}catch{toast('Your current session could not be saved on this device.')}
+ try{localStorage.setItem(QUIZ_CHECKPOINT_KEY,JSON.stringify({version:1,contentVersion:CONTENT_METADATA.content_version,id:quiz.id,kind:quiz.kind,setId:quiz.setId,name:quiz.name,questionIds:quiz.questions.map(q=>q.id),index:quiz.index,answers:quiz.answers,activeMilliseconds:quiz.activeMilliseconds||0,checked:quiz.checked,start:quiz.start,limit:quiz.limit,deadline:quiz.deadline,remote:quiz.remote?{...quiz.remote,revision:quiz.answerQueue.revision,pending:quiz.answerQueue.pending}:null}));queueCloudProgress()}catch{toast('Your current session could not be saved on this device.')}
 }
 function clearQuizCheckpoint(){try{localStorage.removeItem(QUIZ_CHECKPOINT_KEY);queueCloudProgress()}catch{}}
 function readQuizCheckpoint(){
@@ -14,7 +14,7 @@ function readQuizCheckpoint(){
   const questions=saved.questionIds.map(id=>BANK.find(q=>q.id===id));if(questions.some(q=>!q))return null;
   if(Object.entries(saved.answers).some(([id,choice])=>!saved.questionIds.includes(Number(id))||!Number.isInteger(choice)||choice<0||choice>=BANK.find(q=>q.id===Number(id)).options.length))return null;
   if(state.history.some(h=>h.attemptId===saved.id))return null;
-  return {id:saved.id,kind:saved.kind,setId:saved.setId,name:saved.name,questions,index:saved.index,answers:saved.answers,checked:saved.checked,start:saved.start,limit:saved.limit,deadline:saved.limit?saved.deadline:null,remote:saved.remote||null};
+  return {id:saved.id,kind:saved.kind,setId:saved.setId,name:saved.name,questions,index:saved.index,answers:saved.answers,checked:saved.checked,start:saved.start,limit:saved.limit,deadline:saved.limit?saved.deadline:null,activeMilliseconds:Number.isFinite(saved.activeMilliseconds)?Math.max(0,saved.activeMilliseconds):0,remote:saved.remote||null};
  }catch{return null}
 }
 function resumeBanner(){const saved=readQuizCheckpoint();return saved?`<section class="panel resume-panel" style="margin-bottom:24px"><div><div class="eyebrow">${saved.remote?'SAVED TO YOUR ACCOUNT':'SAVED ON THIS DEVICE'}</div><h3>Continue where you left off</h3><p class="sub">${escapeHTML(saved.name)} · Question ${saved.index+1} / ${saved.questions.length}${saved.limit?' · original time limit still applies':''}</p></div><button class="primary" data-action="resume-quiz">Resume practice →</button></section>`:''}

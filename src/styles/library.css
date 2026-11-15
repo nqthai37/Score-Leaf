@@ -4,3 +4,5 @@ html{scrollbar-gutter:stable}.audio-row [data-audio-status]{flex-basis:100%;flex
 .heygen-voice-pair{display:flex;flex-direction:column;align-items:flex-start;gap:7px;background:#eaf0e3;padding:15px;border-radius:7px;min-width:0}.heygen-voice-pair span{font-size:11px;color:#627d55}
 
 .practice-save-row{display:flex;align-items:center;gap:12px;min-height:44px;margin:8px 0}.practice-save-row small{flex:1;line-height:1.4;min-height:2.8em;max-height:2.8em;overflow:hidden;color:#718269}.practice-save-row button{white-space:nowrap;font-size:11px}
+
+.activity-status{display:block;min-height:24px;margin:4px 0 10px;color:var(--muted)}

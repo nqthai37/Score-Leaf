@@ -13,7 +13,7 @@ function tests(){
 function freshFirst(pool){return ToeicDomain.prioritized(pool,state.history)}
 function selectQuestions(pool,count){return ToeicDomain.selectQuestions(pool,count,state.history)}
 function renderQuiz(){
- renderQuizContent();if(quiz.checked)showQuizFeedback();persistQuiz();
+ renderQuizContent();if(quiz.checked)showQuizFeedback();persistQuiz();startStudyActivity();
  if(quiz?.limit){$('#main .quiz-card').insertAdjacentHTML('beforeend',`<div class="question-navigator"><div class="eyebrow">JUMP TO A QUESTION</div><p class="note">Filled circles are answered. You can change answers before submitting.</p><div class="question-buttons">${quiz.questions.map((q,i)=>`<button class="question-dot ${quiz.answers[q.id]!==undefined?'answered':''} ${quiz.index===i?'current':''}" data-question-index="${i}" aria-label="Question ${i+1}${quiz.answers[q.id]!==undefined?', answered':''}" ${quiz.index===i?'aria-current="step"':''}>${i+1}</button>`).join('')}</div></div>`)}
 }
 function selectQuizAnswer(index){

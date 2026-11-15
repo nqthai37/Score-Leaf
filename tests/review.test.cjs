@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict'),d=require('../src/domain/core.js');
+const bank=[{id:1,part:5,metadata_status:'reviewed',skill_tags:['grammar']}];
+const session=(day,correct)=>({assessment:'local_current',date:`2026-11-${String(day).padStart(2,'0')}T10:00:00+07:00`,answers:[{id:1,chosen:0,correct}]});
+let history=[session(1,false)],schedule=()=>d.reviewSchedule(history,bank,{today:'2026-11-15',timezone:'Asia/Ho_Chi_Minh'});
+assert.equal(schedule().items[0].due,'2026-11-02');
+history.push(session(1,true));assert.equal(schedule().items[0].due,'2026-11-02','Immediate repeat never advances recall');assert.equal(schedule().recall.count,0);
+history.push(session(2,true));assert.equal(schedule().items[0].due,'2026-11-05');assert.equal(schedule().recall.accuracy,100);
+history.push(session(5,true));assert.equal(schedule().items[0].due,'2026-11-12');assert.equal(schedule().items[0].stage,2);
+assert.equal(d.performance(history,bank).first.accuracy,0,'Spaced recall cannot rewrite first-answer evidence');
+history.push(session(12,false));assert.equal(schedule().items[0].due,'2026-11-13');assert.equal(schedule().items[0].stage,0);assert.equal(schedule().recall.count,3);
+history.push({...session(14,true),assessment:'unverified'});assert.equal(schedule().items[0].due,'2026-11-13','Unverified import cannot delay review');
+assert.equal(schedule().due.length,1);
+console.log('PASS: spaced recall 1/3/7 days, immediate-repeat exclusion, lapse reset, unchanged first evidence and import exclusion.');

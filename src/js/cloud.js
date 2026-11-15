@@ -17,8 +17,8 @@ function queueCloudProgress(){
  clearTimeout(ToeicCloud.timer);if(ToeicCloud.status!=='conflict')ToeicCloud.timer=setTimeout(()=>ToeicCloud.sync?.flush(),500);
 }
 function cleanCloudState(raw){
- const safe=ToeicDomain.validateBackup({app:'toeic-path',version:1,state:raw},BANK,VOCAB.length);
- safe.history.forEach((history,index)=>{const original=raw.history[index];if(typeof original.attemptId==='string')history.attemptId=original.attemptId;if(typeof original.content_version==='string')history.content_version=original.content_version;history.source='client_practice';history.server_graded=false});return safe;
+ const safe=ToeicDomain.validateBackup({app:'toeic-path',version:1,state:raw},BANK,VOCAB.length,CONTENT_METADATA.content_version);
+ safe.history.forEach((history,index)=>{const original=raw.history[index];if(typeof original.attemptId==='string')history.attemptId=original.attemptId;if(typeof original.content_version==='string')history.content_version=original.content_version;history.server_graded=false});return safe;
 }
 function sameCloudProgress(payload,remote){
  try{
@@ -40,6 +40,7 @@ function updateAccountView(){
 async function switchCloudAccount(user,{force=false}={}){
  if(!force&&ToeicCloud.user?.id===user?.id&&ToeicCloud.ready)return;
  if(typeof practiceResultsVisible!=='undefined')practiceResultsVisible=false;
+ if(typeof stopStudyActivity==='function')stopStudyActivity();
  const epoch=++ToeicCloud.epoch;clearTimeout(ToeicCloud.timer);ToeicCloud.sync?.close();ToeicCloud.sync=null;ToeicCloud.ready=false;
  if(quiz){persistQuiz();quiz=null;clearInterval(clock);stopAudio()}
  ToeicCloud.user=user||null;ToeicCloud.openPractices=[];
@@ -103,8 +104,8 @@ document.addEventListener('click',async event=>{
   }
   if(action==='guest-import'){
    const guest=JSON.parse(localStorage.getItem('toeic-path-v1')||'null');if(!guest){toast('There is no guest history on this device.');return}
-   const incoming=ToeicDomain.validateBackup({app:'toeic-path',version:1,state:guest},BANK,VOCAB.length),merged=ToeicDomain.mergeBackup(state,incoming);
-   if(confirm(`Import ${merged.added} guest sessions? ${merged.duplicates} duplicates will be skipped. Your account goal stays unchanged.`)){state=merged.state;save();render()}
+   const incoming=ToeicDomain.validateBackup({app:'toeic-path',version:1,state:guest},BANK,VOCAB.length,CONTENT_METADATA.content_version),merged=ToeicDomain.mergeBackup(state,incoming);
+   if(confirm(`Import ${merged.added} guest sessions (${incoming.history.filter(h=>h.assessment==='unverified').length} unverified)? ${merged.duplicates} duplicates will be skipped. Your account goal stays unchanged.`)){state=merged.state;save();render()}
   }
   if(action==='sign-out'){
    if(ToeicCloud.sync?.pending){const saved=await ToeicCloud.sync.flush();if(!saved&&!confirm('Some changes are not synced. Sign out and keep them on this device?'))return}

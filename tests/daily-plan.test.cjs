@@ -12,12 +12,14 @@ for(const minutes of [.01,1,5,20,45,120]){
 }
 assert.equal(plan({...input,minutes:.1}).status,'no-group-fits');
 const sample=bank.slice(0,18),answer=(q,correct)=>({id:q.id,chosen:0,correct});
-const old={date:'2026-11-12T10:00:00',seconds:120,answers:sample.map(q=>answer(q,false))};
-const recent={date:'2026-11-13T10:00:00',seconds:300,answers:[answer(bank[0],false)]};
-const p=plan({...input,history:[old,recent],mistakes:sample.map(q=>q.id)});
+const old={assessment:'local_current',date:'2026-11-12T10:00:00',seconds:120,answers:sample.map(q=>answer(q,false))};
+assert.equal(plan({...input,history:[{...old,date:'2026-11-13',seconds:86400}]}).budget_seconds,1200,'Legacy elapsed time never exhausts the day');
+
+const recent={assessment:'local_current',date:'2026-11-13T10:00:00',seconds:300,answers:[answer(bank[0],false)]};
+const p=plan({...input,history:[old,recent],activeDays:{'2026-11-13':300},mistakes:sample.map(q=>q.id)});
 assert.equal(p.budget_seconds,900);assert.ok(!p.groups.some(g=>g.id===bank[0].group_id),'Exclude the entire group touched today');
 assert.ok(p.groups.some(g=>g.reason.type==='review'));
-assert.equal(plan({...input,history:[{...recent,seconds:1200}]}).status,'goal-complete');
+assert.equal(plan({...input,history:[{...recent,seconds:1200}],activeDays:{'2026-11-13':1200}}).status,'goal-complete');
 const all=plan({...input,history:[{...recent,seconds:1,answers:bank.map(q=>answer(q,true))}]});assert.equal(all.status,'all-practiced');
 const repeats=Array.from({length:20},(_,i)=>({...old,date:`2026-10-${String(i+1).padStart(2,'0')}`,answers:[answer(bank[0],false)]}));
 const sparse=plan({...input,history:repeats});assert.equal(sparse.firstAnswers,1);assert.ok(sparse.groups.every(g=>g.reason.type!=='focus'));

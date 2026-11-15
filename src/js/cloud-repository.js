@@ -13,6 +13,10 @@ function createCloudRepository(client){
   gradePracticeAnswer:(id,question)=>unwrap(client.rpc('grade_practice_answer',{p_attempt:id,p_question:question})),
   practiceSnapshot:id=>unwrap(client.rpc('practice_snapshot',{p_attempt:id})),
   completePractice:id=>unwrap(client.rpc('complete_practice',{p_attempt:id})),
+  claimActivity:(attempt,source)=>unwrap(client.rpc('claim_activity',{p_attempt:attempt,p_source:source})),
+  recordActivity:(attempt,source,segment)=>unwrap(client.rpc('record_activity',{p_attempt:attempt,p_source:source,p_id:segment.id,p_start:segment.start,p_end:segment.end,p_milliseconds:segment.milliseconds})),
+  releaseActivity:(attempt,source)=>unwrap(client.rpc('release_activity',{p_attempt:attempt,p_source:source})),
+  activityDays:timezone=>unwrap(client.rpc('activity_days',{p_timezone:timezone})),
   openPractices:()=>unwrap(client.rpc('open_practices')),
   reviewItems:()=>unwrap(client.from('review_items').select('question_id')),
   async practiceHistory(){

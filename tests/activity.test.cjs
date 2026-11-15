@@ -1,0 +1,18 @@
+const assert=require('node:assert/strict');
+const {createActivityClock,splitActivityDays}=require('../src/domain/activity.js');
+let mono=0,wall=Date.parse('2026-11-14T16:59:00Z'),segments=[],n=0;
+const clock=createActivityClock({now:()=>mono,wallNow:()=>wall,id:()=>String(++n),onSegment:s=>segments.push(s)});
+const advance=(ms,interaction=false)=>{mono+=ms;wall+=ms;clock.tick();if(interaction)clock.interact()};
+for(let i=0;i<120;i++)advance(1000,true);
+clock.setVisible(false);advance(30*60*1000);clock.setVisible(true);
+for(let i=0;i<180;i++)advance(1000,true);clock.flush();
+assert.equal(segments.reduce((a,s)=>a+s.milliseconds,0),300000,'Hidden break never becomes active time');
+assert.equal(new Set(segments.map(s=>s.id)).size,segments.length);
+const days=splitActivityDays(segments,'Asia/Ho_Chi_Minh');assert.equal(Math.round(days['2026-11-14']),60);assert.equal(Math.round(days['2026-11-15']),240);
+const before=segments.reduce((a,s)=>a+s.milliseconds,0);wall+=3600000;advance(1000,true);clock.flush();assert.equal(segments.reduce((a,s)=>a+s.milliseconds,0),before+1000,'Wall clock changes do not affect active intervals');
+clock.setListening(true);for(let i=0;i<200;i++)advance(1000);clock.flush();assert.equal(segments.reduce((a,s)=>a+s.milliseconds,0),before+201000,'Visible playing audio bypasses input idle');
+clock.setListening(false);for(let i=0;i<300;i++){clock.setVisible(true);advance(1000)};clock.flush();const stopped=segments.length;for(let i=0;i<120;i++)advance(1000);assert.equal(segments.length,stopped,'Idle time stops accumulating');
+clock.interact();advance(1800000);clock.flush();assert.equal(segments.length,stopped,'Suspended gaps are never inferred');
+const reloaded=createActivityClock({now:()=>mono,wallNow:()=>wall,id:()=>String(++n),onSegment:s=>segments.push(s)});advance(1000);reloaded.tick();reloaded.flush();assert.ok(segments.at(-1).milliseconds<=1000);
+assert.ok(segments.every(s=>s.milliseconds>0&&s.milliseconds<=30000));
+console.log('PASS: monotonic active time, hidden/idle/suspended gaps, real listening, reload, stable segments and timezone midnight splitting.');

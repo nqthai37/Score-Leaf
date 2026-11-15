@@ -24,7 +24,7 @@ function attachServerPractice(snapshot,checkpoint=null){
  const item=snapshot.attempt,ownerId=ToeicCloud.user?.id;if(!ownerId||item.user_id!==ownerId)throw Error('Account changed');
  const questions=restoreQuestionSnapshots(snapshot),index=Math.min(Math.max(0,checkpoint?.index||0),questions.length-1);
  const current={id:item.id,kind:item.kind||'custom',setId:item.test_id,name:item.session_name||'Cloud practice',questions,index,
-  answers:{...snapshot.answers},checked:snapshot.checked.includes(questions[index].id),start:Date.parse(item.started_at),limit:item.expires_at?(Date.parse(item.expires_at)-Date.parse(item.started_at))/1000:0,
+  activeMilliseconds:(snapshot.active_seconds||0)*1000,answers:{...snapshot.answers},checked:snapshot.checked.includes(questions[index].id),start:Date.parse(item.started_at),limit:item.expires_at?(Date.parse(item.expires_at)-Date.parse(item.started_at))/1000:0,
   deadline:item.expires_at?Date.parse(item.expires_at):null,remote:{id:item.id,ownerId},remoteStatus:'saved',remoteClock:{serverMs:Date.parse(snapshot.server_now),monotonicMs:performance.now()}};
  applyPracticeFeedback(current,snapshot.feedback);quiz=current;
  const pending=checkpoint?.remote?.pending||{};
@@ -94,7 +94,7 @@ async function finishRemotePractice(){
   const expired=current.limit&&remainingQuizSeconds(current)===0;
   if(!expired&&(current.remoteStatus==='conflict'||!(await current.answerQueue.flush())))throw Error('Unsaved answers');
   if(expired&&current.answerQueue.size){localStorage.setItem(QUIZ_CHECKPOINT_KEY+'-late-choices',JSON.stringify(checkpointValue()));toast('Time is up. Only answers received before the deadline will count.')}
-  const snapshot=await ToeicCloud.repository.completePractice(current.id);if(!currentRemote(current))return;
+  const activity=StudyActivity.current;activity?.meter?.flush();await flushActivity(activity);stopStudyActivity();const snapshot=await ToeicCloud.repository.completePractice(current.id);if(!currentRemote(current))return;
   applyPracticeFeedback(current,snapshot.feedback);finishQuiz(snapshot);refreshPracticeOverview().catch(()=>{});
  }catch{if(currentRemote(current)){updatePracticeSave('error',current);toast('The session could not be submitted. Reconnect and use See my results or Review & submit to retry.')}}
  finally{current.submitting=false}
@@ -106,11 +106,12 @@ function cloudPracticeBanner(){
 }
 async function refreshPracticeOverview(){
  if(!ToeicCloud.user||!ToeicCloud.repository)return;const ownerId=ToeicCloud.user.id,epoch=ToeicCloud.epoch;
+ await refreshActivityDays();
  const [open,verified,review]=await Promise.all([ToeicCloud.repository.openPractices(),ToeicCloud.repository.practiceHistory(),ToeicCloud.repository.reviewItems()]);
  if(ownerId!==ToeicCloud.user?.id||epoch!==ToeicCloud.epoch)return;
  ToeicCloud.openPractices=open;
  const byId=new Map(state.history.map(h=>[h.attemptId||JSON.stringify([h.date,h.name,h.answers]),h]));
- for(const history of verified)byId.set(history.attemptId,{...history,server_graded:true,source:'server_practice'});
+ for(const history of verified)byId.set(history.attemptId,{...history,time_source:history.seconds>0?'active_estimate':'legacy_estimate',server_graded:true,source:'server_practice'});
  const serverIds=new Set(verified.flatMap(h=>h.answers.map(a=>a.id)));state.mistakes=[...new Set([...state.mistakes.filter(id=>!serverIds.has(id)),...review.map(item=>item.question_id)])];
  state.history=[...byId.values()].sort((a,b)=>Date.parse(a.date)-Date.parse(b.date));
  localStorage.setItem(storageKey,JSON.stringify(state));if(!quiz&&!practiceResultsVisible&&['dashboard','progress','tests'].includes(page))render();
