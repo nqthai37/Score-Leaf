@@ -11,6 +11,8 @@ try{
  await db.exec(await readFile(new URL('../supabase/migrations/202611120002_progress_sync.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../supabase/migrations/202611120003_account_fence.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../supabase/migrations/202611130004_practice_flow.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../supabase/migrations/202611150005_active_study_time.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../supabase/migrations/202611150006_import_provenance.sql',import.meta.url),'utf8'));
  const A='aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa',B='bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb';
  await db.query('insert into auth.users values($1),($2)',[A,B]);
  const as=async user=>{await db.exec('reset role;set role authenticated');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[user])};
@@ -71,5 +73,39 @@ try{
  await db.exec('reset role;set role anon');await db.query("select set_config('request.jwt.claim.sub','',false)");
  assert.equal(await call('select count(*)::int from public.questions'),246);
  await assert.rejects(()=>call('select public.start_attempt($1,$2)',[[23],key]),/permission denied/);
+
+ await as(A);
+ const activeAttempt=await call('select public.start_attempt($1,$2,$3)',[[23],'55555555-5555-4555-8555-555555555555','learning']);
+ const source='66666666-6666-4666-8666-666666666666',otherSource='77777777-7777-4777-8777-777777777777',segment='88888888-8888-4888-8888-888888888888';
+ const claimed=await call('select public.claim_activity($1,$2)',[activeAttempt.id,source]);assert.equal(claimed.owned,true);assert.equal(Date.parse(claimed.server_now)%1,0);await db.exec('reset role');const acquired=await call('select acquired_at::text from private.activity_leases');assert.equal(Date.parse(acquired),Date.parse(claimed.server_now));assert.ok(/\.\d{1,3}(?:[+Z]|$)/.test(acquired)||!acquired.includes('.'),'Lease timestamps must roundtrip through JS milliseconds');await as(A);
+ assert.equal((await call('select public.claim_activity($1,$2)',[activeAttempt.id,otherSource])).owned,false,'Second tab cannot duplicate activity');
+ await db.exec('reset role');await db.query("update private.activity_leases set acquired_at=clock_timestamp()-interval '60 seconds',last_end=clock_timestamp()-interval '60 seconds' where user_id=$1",[A]);await as(A);
+ const end=new Date(Date.now()-1000).toISOString(),start=new Date(Date.parse(end)-15000).toISOString();
+ const activityArgs=[activeAttempt.id,source,segment,start,end,15000];
+ const ack=await call('select public.record_activity($1,$2,$3,$4,$5,$6)',activityArgs);
+ assert.deepEqual(await call('select public.record_activity($1,$2,$3,$4,$5,$6)',activityArgs),ack);
+ assert.equal(await call('select count(*)::int from public.activity_segments'),1);
+ await assert.rejects(()=>call('select public.record_activity($1,$2,$3,$4,$5,$6)',[activeAttempt.id,source,otherSource,start,end,15000]),/overlapping/);
+ await assert.rejects(()=>db.query('update public.activity_segments set milliseconds=30000'),/permission denied/);
+ const days=await call("select public.activity_days('Asia/Ho_Chi_Minh')");assert.equal(Object.values(days).reduce((a,b)=>a+Number(b),0),15,'Open attempt already reduces daily budget');
+ await as(B);assert.equal(await call('select count(*)::int from public.activity_segments'),0);assert.deepEqual(await call("select public.activity_days('Asia/Ho_Chi_Minh')"),{});
+ await assert.rejects(()=>call('select public.claim_activity($1,$2)',[activeAttempt.id,otherSource]),/unavailable/);
+ await assert.rejects(()=>call('select public.record_activity($1,$2,$3,$4,$5,$6)',activityArgs),/already used/);
+ await as(A);await call('select public.submit_attempt($1)',[activeAttempt.id]);
+ assert.deepEqual(await call('select public.record_activity($1,$2,$3,$4,$5,$6)',activityArgs),ack,'Lost ack can be replayed after submit');
+ assert.equal(Object.values(await call("select public.activity_days('Asia/Ho_Chi_Minh')")).reduce((a,b)=>a+Number(b),0),15,'Submission never adds elapsed duration');
+ assert.equal((await call('select public.practice_history()')).find(h=>h.attemptId===activeAttempt.id).seconds,15);
+ assert.ok((await call('select public.practice_history()')).filter(h=>h.attemptId!==activeAttempt.id).every(h=>h.seconds===0),'Legacy wall duration is not inferred as active time');
+ await assert.rejects(()=>call("select public.activity_days('Invalid/Zone')"),/timezone/);
+
+ await as(A);
+
+ await db.exec('reset role');await db.query("insert into public.activity_segments values('99999999-9999-4999-8999-999999999999',$1,$2,$3,'2026-01-01T16:59:45Z','2026-01-01T17:00:15Z',30000)",[A,activeAttempt.id,source]);await as(A);
+ const midnightDays=await call("select public.activity_days('Asia/Ho_Chi_Minh')");assert.equal(Number(midnightDays['2026-01-01']),15);assert.equal(Number(midnightDays['2026-01-02']),15,'An overnight segment splits by learner midnight');
+ const release=await (async()=>{await db.exec('reset role');const v=await call('select version from private.content_releases');await as(A);return v})();
+ const previousRevision=await call('select revision from public.progress_snapshots');
+ await call('select public.save_progress($1,null,$2)',[{...progress,history:[{...progress.history[0],content_version:release,answers:[{id:24,chosen:0,correct:true},{id:23,chosen:0,correct:false}]}]},previousRevision]);
+ const sanitized=(await call('select state from public.progress_snapshots')).history[0];assert.deepEqual(sanitized.answers.map(a=>a.correct),[false,true]);assert.equal(sanitized.server_graded,false);
+ await assert.rejects(()=>call('select public.save_progress_legacy($1,null,0)',[progress]),/permission denied/);
  console.log('PASS: PostgreSQL migrations/seed, RLS user A/B/anonymous, private keys, ownership, validation, server grading, duplicate submit/start, expiry and revision checks. Hosted Auth/HTTP still require Supabase integration tests.');
 }finally{await db.close()}
