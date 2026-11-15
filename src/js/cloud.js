@@ -105,7 +105,7 @@ document.addEventListener('click',async event=>{
   if(action==='guest-import'){
    const guest=JSON.parse(localStorage.getItem('toeic-path-v1')||'null');if(!guest){toast('There is no guest history on this device.');return}
    const incoming=ToeicDomain.validateBackup({app:'toeic-path',version:1,state:guest},BANK,VOCAB.length,CONTENT_METADATA.content_version),merged=ToeicDomain.mergeBackup(state,incoming);
-   if(confirm(`Import ${merged.added} guest sessions (${incoming.history.filter(h=>h.assessment==='unverified').length} unverified)? ${merged.duplicates} duplicates will be skipped. Your account goal stays unchanged.`)){state=merged.state;save();render()}
+   if(confirm(`Import ${merged.added} guest sessions (${merged.unverifiedAdded} unverified)? ${merged.duplicates} duplicates will be skipped. Your account goal stays unchanged.`)){state=merged.state;save();render()}
   }
   if(action==='sign-out'){
    if(ToeicCloud.sync?.pending){const saved=await ToeicCloud.sync.flush();if(!saved&&!confirm('Some changes are not synced. Sign out and keep them on this device?'))return}

@@ -85,7 +85,10 @@ const ToeicDomain=(()=>{
  const historyKey=h=>JSON.stringify([h.date,h.name,h.answers.map(a=>[a.id,a.chosen])]);
  function mergeBackup(current,incoming){
   const keys=new Set(current.history.map(historyKey)),added=incoming.history.filter(h=>{const key=historyKey(h);if(keys.has(key))return false;keys.add(key);return true});
-  return {state:{...current,history:[...current.history,...added].sort((a,b)=>Date.parse(a.date)-Date.parse(b.date)),mistakes:[...new Set([...current.mistakes,...incoming.mistakes])],unverified_mistakes:[...new Set([...(current.unverified_mistakes||[]),...(incoming.unverified_mistakes||[])])],known:[...new Set([...current.known,...incoming.known])],vocabDays:[...new Set([...current.vocabDays,...incoming.vocabDays])]},added:added.length,duplicates:incoming.history.length-added.length};
+  const history=[...current.history,...added].sort((a,b)=>Date.parse(a.date)-Date.parse(b.date)),latest=new Map();
+  for(const h of evidenceHistory(history))for(const answer of h.answers)latest.set(answer.id,answer.correct);
+  const mistakes=[...new Set([...current.mistakes.filter(id=>!latest.has(id)),...[...latest].filter(([,correct])=>!correct).map(([id])=>id)])];
+  return {state:{...current,history,mistakes,unverified_mistakes:[...new Set([...(current.unverified_mistakes||[]),...(incoming.unverified_mistakes||[])])],known:[...new Set([...current.known,...incoming.known])],vocabDays:[...new Set([...current.vocabDays,...incoming.vocabDays])]},added:added.length,unverifiedAdded:added.filter(h=>h.assessment==='unverified').length,duplicates:incoming.history.length-added.length};
  }
  return {accuracy,evidenceHistory,reviewSchedule,shuffle,prioritized,groups,selectQuestions,selectWithinBudget,performance,score,validateBackup,mergeBackup};
 })();
