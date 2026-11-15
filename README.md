@@ -134,3 +134,7 @@ Mỗi lần lưu dùng revision và account guard. Mất mạng/HTTP lỗi khôn
 Active study time now uses a separate, retry-safe ledger instead of elapsed start-to-submit time. The daily budget includes recorded time from open sessions; legacy durations remain estimates. Imports are recalculated only against a matching content version, and unknown-version history is excluded from skill/review evidence. Spaced review uses an experimental 1 → 3 → 7 day rule, independently from first-answer accuracy.
 
 See [verification](docs/SYNC_VERIFICATION.md) for automated results and pending real-account/device acceptance. AI is deferred for this iteration by the user.
+
+### Next.js migration preview
+
+A separate App Router + TypeScript foundation lives in [apps/web](apps/web/README.md) on `migration/nextjs-foundation`. The current Pages application is retained. See [baseline](docs/migration/BASELINE.md), [migration status](docs/migration/STATUS.md), and [the supplied plan](docs/migration/NEXTJS_PLAN.md). Run `npm run migration:check` to verify preserved legacy identities and adapters.

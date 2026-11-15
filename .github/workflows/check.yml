@@ -18,3 +18,22 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run test:build
+
+  next-preview:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: node ../../scripts/migration-baseline.mjs --check
+      - run: npm test
+      - run: npm run build
+      - run: npm run typecheck
+      - run: npm run test:routes

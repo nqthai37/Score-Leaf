@@ -15,7 +15,13 @@
     "test:db": "node tests/database.test.mjs",
     "pretest": "node scripts/vendor.mjs",
     "predev": "node scripts/vendor.mjs",
-    "prebuild": "node scripts/vendor.mjs"
+    "prebuild": "node scripts/vendor.mjs",
+    "migration:check": "node scripts/migration-baseline.mjs --check",
+    "web:dev": "npm --prefix apps/web run dev",
+    "web:build": "npm --prefix apps/web run build",
+    "web:typecheck": "npm --prefix apps/web run typecheck",
+    "web:test": "npm --prefix apps/web test",
+    "web:test:routes": "npm --prefix apps/web run test:routes"
   },
   "engines": {
     "node": ">=20"
