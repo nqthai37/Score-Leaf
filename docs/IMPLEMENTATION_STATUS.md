@@ -61,3 +61,15 @@ Chưa có AI coach, nghiệm thu portfolio với người dùng thật hoặc ap
 - Đã nộp một phiên QA Part 5: 1 đáp án đúng, 7 bỏ trống. Phiên này nằm trong lịch sử tài khoản thử nghiệm, không phải bằng chứng năng lực người học. Không tự xóa dữ liệu tài khoản.
 - Sửa đồng bộ nền làm mất màn hình kết quả; thêm Review results cho lịch sử đã xác minh và test không nhân đôi kết quả khi mở lại.
 - Asset URLs có hash nội dung khi build, tránh trình duyệt dùng lẫn mã nguồn cũ và mới sau deploy.
+
+## Đợt dữ liệu học 15/11/2026
+
+Thực hiện theo `NEXT_STEPS.md`, với hai điều chỉnh người dùng đã xác nhận: kiểm tra tự động trước vì chưa có hai tài khoản thử nghiệm; chưa triển khai AI trong đợt này.
+
+- Migration 005 thêm activity segments và lease một nguồn/tài khoản; phân bổ theo ngày/múi giờ, tính cả attempt mở. Không dùng started/submitted để khóa ngân sách. Deadline timed và chấm điểm không đổi.
+- Migration 006 đăng ký phiên bản nội dung hiện tại và chuẩn hóa đúng/sai của backup tương thích ở backend. Frontend tính lại lựa chọn đúng phiên bản; dữ liệu thiếu/khác version được đánh dấu unverified, không đưa vào kỹ năng, Part yếu hoặc lịch ôn. Cờ server-graded từ file không được tin.
+- Hai migration đã chạy thành công trên project Supabase sau kiểm tra schema; không sửa migration cũ hoặc xóa lịch sử. UI SQL lỗi một lần do thay thế nội dung editor không đầy đủ; đã kiểm tra lại schema trước khi chạy riêng 006.
+- Planner và tiến độ phân biệt first-answer với spaced recall; lịch thử nghiệm 1 → 3 → 7 ngày, không giãn khi làm lại ngay. Dùng nhãn skill reviewed khi đủ mẫu, còn lại theo Part.
+- Có regression tests cho idle/hidden/audio/reload, clock changes, duplicate segments, overlap/source/ownership, chia ngày, import giả, lịch ôn và lỗi mạng/đổi tài khoản. `SYNC_VERIFICATION.md` phân biệt kết quả mô phỏng với nghiệm thu hai thiết bị thật.
+- Hạn chế: active time là ước lượng tương tác, có ngưỡng idle 120s và có thể bỏ khoảng browser bị suspend; source mới có thể chờ lease cũ tối đa 45s. Offline đầy đủ không thuộc phạm vi.
+- AI, React Native và nghiệm thu độc lập nhiều tài khoản/thiết bị thật chưa hoàn tất; không đánh dấu xanh dựa trên CI.

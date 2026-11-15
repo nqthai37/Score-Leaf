@@ -59,3 +59,15 @@ Tài liệu chính thức: [RLS](https://supabase.com/docs/guides/database/postg
 Backup không biến kết quả browser thành điểm server. Các RPC attempt/answer/submit hiện có tiếp tục giữ answer key riêng và quyền ghi server; quiz đăng nhập hiện đã gọi wrapper practice RPC từ migration 202611130004. Snapshot mở không trả answer key; chỉ feedback đã check hoặc kết quả sau submit mới có lời giải. History được lấy lại từ server, không tin cờ trong backup.
 
 Đã kiểm tra HTTP bằng public key: 246 questions, 154 question_groups, 10 practice_tests, 102 audio_assets; anonymous đọc progress_snapshots bị từ chối (401/42501). Không đưa service-role key vào ứng dụng.
+
+## Active time và nguồn backup (15/11/2026)
+
+Chạy bổ sung theo thứ tự `202611150005_active_study_time.sql`, `202611150006_import_provenance.sql`. Không chạy lại migration cũ. Cả hai đã được áp dụng lên project hiện tại.
+
+`claim_activity` cấp lease 45s duy nhất theo tài khoản, `record_activity` nhận đoạn tối đa 30s với ID cố định, kiểm tra owner/source/thời gian/overlap; `activity_days` chia khoảng UTC theo IANA timezone. Cả phiên mở cũng được tính, submit không cộng lại. Client không ghi bảng trực tiếp. Hạn timed luôn riêng.
+
+`save_progress` chuẩn hóa đáp án của phiên bản đã đăng ký trong `private.content_releases`; không tin score/trust flags của file. Bản khác phiên bản giữ lịch sử chưa kiểm chứng và không đóng góp bằng chứng trên client. Khi phát hành nội dung mới cần migration đăng ký version/question hashes tương ứng; không áp answer key mới cho backup cũ.
+
+Rollback frontend: có thể quay về commit trước; các field/RPC cũ vẫn tồn tại qua wrapper và dữ liệu cũ không bị xóa. Thời lượng cũ nằm ở legacy_seconds trong history, không chuyển thành active time. Chỉ source được server nhận mới làm giảm ngân sách cloud.
+
+Xem `docs/LEARNING_DATA_DESIGN.md` và `docs/SYNC_VERIFICATION.md` về giới hạn, mất mạng và nghiệm thu còn thiếu. AI chưa triển khai theo quyết định người dùng.

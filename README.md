@@ -128,3 +128,9 @@ Trong Study preferences, nhập email và mở link trong cùng trình duyệt �
 `progress_snapshots` là backup kết quả **luyện tập client**, không phải điểm server đã xác minh. Backup giữ mục tiêu, lịch sử, sổ lỗi, từ vựng và phiên đang làm. Luồng chấm bài qua RPC server đã có riêng; chưa thay luồng quiz local bằng luồng đó. Không gán `server_graded=true` cho backup.
 
 Mỗi lần lưu dùng revision và account guard. Mất mạng/HTTP lỗi không báo đã lưu cloud; dữ liệu local giữ nguyên. Khi xung đột, UI yêu cầu tải bản cloud, giữ bản local trước đó tại khóa `<account>-before-reload`. Không ghi đè âm thầm giữa hai thiết bị.
+
+### Learning data update — 15 November 2026
+
+Active study time now uses a separate, retry-safe ledger instead of elapsed start-to-submit time. The daily budget includes recorded time from open sessions; legacy durations remain estimates. Imports are recalculated only against a matching content version, and unknown-version history is excluded from skill/review evidence. Spaced review uses an experimental 1 → 3 → 7 day rule, independently from first-answer accuracy.
+
+See [verification](docs/SYNC_VERIFICATION.md) for automated results and pending real-account/device acceptance. AI is deferred for this iteration by the user.
