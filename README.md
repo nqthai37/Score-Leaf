@@ -4,7 +4,7 @@ A personal TOEIC Listening & Reading practice app for building a consistent stud
 
 **[Try the live app](https://toeic-path-next-preview.vercel.app)** · [Source code](https://github.com/nqthai37/toeic-path) · [Development & deployment](docs/DEPLOYMENT.md)
 
-The welcome page introduces the app beside an email/password **sign-in and sign-up** form. Visitors can also try guest practice before creating an account.
+The English welcome page introduces the app beside an email/password **sign-in and sign-up** form. The sign-in page has no guest-practice shortcut.
 
 ## What you can do
 

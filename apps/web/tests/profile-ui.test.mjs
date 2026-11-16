@@ -166,7 +166,7 @@ test("profile ignites on a fast first response, but never on immediate reopen or
     root = createRoot(host);
     await mount();
     await click(".profile-trigger");
-    assert.ok(host.textContent.includes("Đăng nhập để bắt đầu giữ lửa."));
+    assert.ok(host.textContent.includes("Sign in to start your streak."));
     assert.equal(claims, 1, "Guest practice cannot claim an account login day");
   } finally {
     await act(async () => root.unmount());

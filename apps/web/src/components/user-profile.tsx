@@ -69,14 +69,16 @@ export function UserProfile() {
       });
       if (!alive.current || version !== mutationVersion.current) return;
       if (error) {
-        setError("Chưa tải được hồ sơ. Vui lòng thử lại khi có mạng.");
+        setError(
+          "Unable to load your profile. Please try again when you are online.",
+        );
         return;
       }
       setProfile(data as LearnerProfile);
       setError("");
     })()
       .catch(() => {
-        if (alive.current) setError("Chưa thể kết nối hồ sơ.");
+        if (alive.current) setError("Unable to connect to your profile.");
       })
       .finally(() => {
         request.current = null;
@@ -160,7 +162,7 @@ export function UserProfile() {
       }
     } catch {
       if (alive.current)
-        setError("Chưa thể thắp lửa. Kết nối lại rồi thử lại nhé.");
+        setError("Unable to light your flame. Please reconnect and try again.");
     } finally {
       if (alive.current) setClaiming(false);
     }
@@ -184,7 +186,7 @@ export function UserProfile() {
       ? user.user_metadata.display_name
       : "") ||
     user?.email?.split("@")[0] ||
-    "Học thử";
+    "Guest";
   const today = profile?.today || calendarDay(new Date()),
     plan = planDay(progress.start, progress.weeks, today);
   return (
@@ -195,7 +197,7 @@ export function UserProfile() {
         ref={trigger}
         onClick={toggle}
         disabled={!ready}
-        aria-label="Mở hồ sơ cá nhân"
+        aria-label="Open your profile"
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls="learner-profile"
@@ -204,7 +206,7 @@ export function UserProfile() {
         <span className="profile-trigger-copy">
           <b>{displayName}</b>
           <small>
-            Ngày {plan.elapsed}/{plan.total}
+            Day {plan.elapsed}/{plan.total}
           </small>
         </span>
         <span className="profile-mini-streak">
@@ -223,11 +225,11 @@ export function UserProfile() {
           aria-labelledby="learner-profile-title"
         >
           <div className="profile-card-heading">
-            <span className="eyebrow">GÓC NHỎ CỦA BẠN</span>
+            <span className="eyebrow">YOUR LITTLE CORNER</span>
             <button
               type="button"
               className="profile-close"
-              aria-label="Đóng hồ sơ"
+              aria-label="Close profile"
               onClick={() => {
                 changeOpen(false);
                 trigger.current?.focus();
@@ -244,15 +246,15 @@ export function UserProfile() {
               <h2 id="learner-profile-title">{displayName}</h2>
               <small>
                 {user
-                  ? "Học đều một chút, tiến xa mỗi ngày."
-                  : "Khám phá lộ trình của riêng bạn."}
+                  ? "A little practice, a little progress."
+                  : "Find a study routine that works for you."}
               </small>
             </div>
             {user && (
               <button
                 type="button"
                 className="profile-edit"
-                aria-label="Sửa tên hiển thị"
+                aria-label="Edit display name"
                 onClick={() => {
                   setName(displayName);
                   setEditing(!editing);
@@ -284,7 +286,7 @@ export function UserProfile() {
                 } catch {
                   if (alive.current)
                     setError(
-                      "Chưa lưu được tên. Dùng từ 1–60 ký tự và thử lại.",
+                      "Unable to save your name. Use 1–60 characters and try again.",
                     );
                 } finally {
                   if (alive.current) setSaving(false);
@@ -292,7 +294,7 @@ export function UserProfile() {
               }}
             >
               <label>
-                Tên hiển thị
+                Display name
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -308,38 +310,38 @@ export function UserProfile() {
                   type="submit"
                   disabled={saving || !name.trim()}
                 >
-                  {saving ? "Đang lưu…" : "Lưu tên"}
+                  {saving ? "Saving…" : "Save name"}
                 </button>
                 <button
                   className="text-btn"
                   type="button"
                   onClick={() => setEditing(false)}
                 >
-                  Hủy
+                  Cancel
                 </button>
               </div>
             </form>
           )}
           <div className="profile-plan">
             <div>
-              <span>Lộ trình của bạn</span>
+              <span>Your study plan</span>
               <strong>
-                Ngày {plan.elapsed}
+                Day {plan.elapsed}
                 <small> / {plan.total}</small>
               </strong>
             </div>
-            <span className="profile-week-label">{progress.weeks} tuần</span>
+            <span className="profile-week-label">{progress.weeks} weeks</span>
             <progress
-              aria-label="Số ngày trong lộ trình"
+              aria-label="Days in your study plan"
               max={plan.total}
               value={Math.min(plan.elapsed, plan.total)}
             />
             <p>
               {plan.elapsed === 0
-                ? "Lộ trình sẽ bắt đầu vào ngày bạn đã chọn."
+                ? "Your plan starts on your selected date."
                 : plan.elapsed > plan.total
-                  ? "Bạn đã đi hết thời gian dự kiến. Tiếp tục giữ thói quen nhé!"
-                  : `${plan.total - plan.elapsed} ngày còn lại · ${progress.minutes} phút mỗi ngày`}
+                  ? "Your planned study period is complete. Keep your routine going!"
+                  : `${plan.total - plan.elapsed} ${plan.total - plan.elapsed === 1 ? "day" : "days"} left · ${progress.minutes} minutes a day`}
             </p>
           </div>
           <div
@@ -361,27 +363,30 @@ export function UserProfile() {
               )}
             </div>
             <div>
-              <span className="eyebrow">CHUỖI ĐĂNG NHẬP</span>
+              <span className="eyebrow">LOGIN STREAK</span>
               <strong>
                 {owner ? (profile ? profile.streak : "—") : 0}
-                <small> ngày liên tiếp</small>
+                <small>
+                  {profile?.streak === 1 ? " day in a row" : " days in a row"}
+                </small>
               </strong>
               <p>
                 {!owner
-                  ? "Đăng nhập để bắt đầu giữ lửa."
+                  ? "Sign in to start your streak."
                   : celebrating
-                    ? "Đã thắp lửa hôm nay!"
+                    ? "Your flame is lit for today!"
                     : claiming
-                      ? "Đang thắp lửa…"
+                      ? "Lighting your flame…"
                       : profile?.celebrated_today
-                        ? "Lửa hôm nay đã sáng. Hẹn bạn ngày mai!"
-                        : "Mỗi ngày quay lại là một bước tiến."}
+                        ? "Your flame is lit. See you tomorrow!"
+                        : "Every day you return is a step forward."}
               </p>
             </div>
           </div>
           {celebrating && (
             <span className="profile-celebration-message" role="status">
-              🔥 Đã thắp lửa hôm nay! {profile?.streak} ngày liên tiếp.
+              🔥 Your flame is lit for today! {profile?.streak}{" "}
+              {profile?.streak === 1 ? "day" : "days"} in a row.
             </span>
           )}
           {error && (
@@ -393,18 +398,18 @@ export function UserProfile() {
                 disabled={claiming}
                 onClick={() => void claim()}
               >
-                Thử lại
+                Try again
               </button>
             </div>
           )}
           <p className="profile-streak-note">
-            Streak tính mỗi ngày bạn vào app khi đã đăng nhập, theo{" "}
-            {profile?.timezone || "Asia/Ho_Chi_Minh"}. Bỏ lỡ một ngày sẽ bắt đầu
-            lại từ 1.
+            Your streak counts each day you visit while signed in, using{" "}
+            {profile?.timezone || "Asia/Ho_Chi_Minh"}. Missing a day restarts
+            your streak at 1.
           </p>
           <div className="profile-card-links">
             <Link href="/settings" onClick={() => setOpen(false)}>
-              Cài đặt lộ trình <span>↗</span>
+              Study settings <span>↗</span>
             </Link>
             {owner ? (
               <button
@@ -415,16 +420,16 @@ export function UserProfile() {
                     changeOpen(false);
                   } catch {
                     setError(
-                      "Còn tiến độ chờ đồng bộ. Hãy xuất backup trong Cài đặt trước.",
+                      "Some progress is waiting to sync. Export a backup in Settings first.",
                     );
                   }
                 }}
               >
-                Đăng xuất
+                Sign out
               </button>
             ) : (
               <Link href="/" onClick={() => setOpen(false)}>
-                Đăng nhập / Đăng ký <span>→</span>
+                Sign in / Sign up <span>→</span>
               </Link>
             )}
           </div>

@@ -86,6 +86,13 @@ try {
   assert.match(landing, /auth-form-side/);
   assert.ok(!landing.includes('id="sidebar"'));
   assert.match(landing, /auth-email/);
+  assert.match(landing, /<html[^>]*lang="en"/);
+  assert.match(landing, /Welcome back\./);
+  assert.doesNotMatch(
+    landing,
+    /class="auth-guest"|href="\/dashboard"/,
+    "The sign-in page must not offer guest practice",
+  );
   assert.equal((await fetch(origin + "/missing-page")).status, 404);
   const invalid = await fetch(origin + "/practice/invalid-attempt");
   assert.ok([200, 404].includes(invalid.status));

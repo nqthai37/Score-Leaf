@@ -11,16 +11,16 @@ export function PasswordSettings() {
   if (!user) return null;
   return (
     <section className="panel daily-card">
-      <h2>Mật khẩu đăng nhập</h2>
+      <h2>Sign-in password</h2>
       <p>
-        Đã dùng link email trước đây? Đặt mật khẩu để lần sau đăng nhập ngay từ
-        trang đầu.
+        Previously used an email link? Set a password to sign in directly next
+        time.
       </p>
       <form
         onSubmit={async (e) => {
           e.preventDefault();
           if (password !== confirm) {
-            setNotice("Mật khẩu nhập lại chưa khớp.");
+            setNotice("Passwords do not match.");
             return;
           }
           setBusy(true);
@@ -30,13 +30,13 @@ export function PasswordSettings() {
             setPassword("");
             setConfirm("");
             setNotice(
-              "Đã cập nhật mật khẩu. Lần sau bạn có thể đăng nhập bằng email và mật khẩu.",
+              "Password updated. You can now sign in with your email and password.",
             );
           } catch (error) {
             setNotice(
               error instanceof Error
                 ? error.message
-                : "Chưa cập nhật được mật khẩu.",
+                : "Unable to update your password.",
             );
           } finally {
             setBusy(false);
@@ -45,7 +45,7 @@ export function PasswordSettings() {
       >
         <div className="form-grid">
           <label>
-            Mật khẩu mới
+            New password
             <input
               type="password"
               autoComplete="new-password"
@@ -57,7 +57,7 @@ export function PasswordSettings() {
             />
           </label>
           <label>
-            Nhập lại mật khẩu mới
+            Confirm new password
             <input
               type="password"
               autoComplete="new-password"
@@ -70,7 +70,7 @@ export function PasswordSettings() {
           </label>
         </div>
         <button className="primary" type="submit" disabled={busy}>
-          {busy ? "Đang lưu…" : "Lưu mật khẩu"}
+          {busy ? "Saving…" : "Save password"}
         </button>
       </form>
     </section>

@@ -544,9 +544,7 @@ export function Vocabulary() {
         </button>
         {flipped && (
           <>
-            <p>
-              {word[1]} · {word[3]}
-            </p>
+            <p>{word[1]}</p>
             <p>{word[2]}</p>
           </>
         )}
@@ -663,7 +661,7 @@ export function ProgressPage() {
             <div className="history-row" key={h.attemptId || i}>
               <div>
                 <b>{h.name}</b>
-                <p>{new Date(h.date).toLocaleDateString()}</p>
+                <p>{new Date(h.date).toLocaleDateString("en-US")}</p>
               </div>
               <span>
                 {h.answers.filter((a) => a.correct).length} / {h.answers.length}
@@ -886,7 +884,7 @@ export function Settings() {
               guest progress stays separate.
             </p>
             <Link className="link" href="/">
-              Đăng nhập / Đăng ký bằng mật khẩu →
+              Sign in / Sign up with a password →
             </Link>
           </form>
         )}

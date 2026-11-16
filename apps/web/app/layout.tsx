@@ -20,7 +20,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="vi">
+    <html lang="en">
       <body>
         <a className="skip-link" href="#main-content">
           Skip to content
