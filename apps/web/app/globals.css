@@ -1,6 +1,14 @@
 html {
   scrollbar-gutter: stable;
 }
+.brand-logo {
+  display: block;
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
 main {
   min-height: calc(100dvh - 150px);
 }

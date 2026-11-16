@@ -123,7 +123,15 @@ export function AuthPage({
     <div className="auth-layout">
       <section className="auth-intro">
         <Link className="brand" href="/">
-          <span className="brand-icon">↗</span>TOEIC<span>path</span>
+          <img
+            className="brand-logo"
+            src="/branding/toeic-path-logo.png"
+            width={40}
+            height={40}
+            alt=""
+            aria-hidden="true"
+          />
+          TOEIC<span>path</span>
         </Link>
         <div className="auth-intro-copy">
           <span className="auth-kicker">SMALL STEPS. REAL PROGRESS.</span>

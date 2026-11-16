@@ -54,7 +54,15 @@ export function Navigation() {
           href="/dashboard"
           onClick={() => setOpen(false)}
         >
-          <span className="brand-icon">↗</span>TOEIC<span>path</span>
+          <img
+            className="brand-logo"
+            src="/branding/toeic-path-logo.png"
+            width={40}
+            height={40}
+            alt=""
+            aria-hidden="true"
+          />
+          TOEIC<span>path</span>
         </Link>
         <div className="workspace-label">YOUR STUDY SPACE</div>
         <nav aria-label="Main navigation">
