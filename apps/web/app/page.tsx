@@ -1,2 +1,5 @@
-import { redirect } from "next/navigation";
-export default function Home(){redirect("/dashboard")}
+import { AuthPage } from "@/components/auth-page";
+export const metadata = { title: "TOEIC Path — Luyện tập theo nhịp của bạn" };
+export default function Page() {
+  return <AuthPage />;
+}
