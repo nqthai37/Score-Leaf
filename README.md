@@ -4,6 +4,8 @@ A personal TOEIC Listening & Reading practice app for building a consistent stud
 
 **[Try the live app](https://scoreleaf.vercel.app)** · [Source code](https://github.com/nqthai37/toeic-path) · [Development & deployment](docs/DEPLOYMENT.md)
 
+`main` is the single maintained demo branch. Open `ScoreLeaf.code-workspace` in VS Code for the app, backend and [project documentation](docs/README.md).
+
 The English welcome page introduces the app beside an email/password **sign-in and sign-up** form. A verified account is required to access every learning page, including through direct URLs.
 
 ## What you can do
@@ -76,6 +78,7 @@ src/                   Authored content and original migration reference fixture
 scripts/               Content generation, validation and migration notice build
 tests/                 Domain, adapter and database regression tests
 docs/                  Design notes, verification and migration history
+  archive/             Earlier plans and feature history
 ```
 
 The production application is entirely served by **Next.js on Vercel**. GitHub Pages is retained only as a migration notice and local history exporter for learners arriving from the former address. The previous static application remains in source for regression checks; it is not loaded by the React app.

@@ -9,8 +9,8 @@
       "path": "supabase"
     },
     {
-      "name": "Migration docs",
-      "path": "docs/migration"
+      "name": "Project docs",
+      "path": "docs"
     }
   ],
   "settings": {

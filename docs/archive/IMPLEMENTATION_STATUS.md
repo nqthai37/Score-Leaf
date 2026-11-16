@@ -1,4 +1,4 @@
-> Current production runtime: Next.js on Vercel. This file records the earlier implementation history. See [current migration status](migration/STATUS.md) and [deployment guide](DEPLOYMENT.md).
+> Current production runtime: Next.js on Vercel. This file records the earlier implementation history. See [current migration status](../migration/STATUS.md) and [deployment guide](../DEPLOYMENT.md).
 
 # Trạng thái thực hiện kế hoạch hợp nhất
 
