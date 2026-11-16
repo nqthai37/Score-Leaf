@@ -1,5 +1,7 @@
 # TOEIC Path — Next.js preview
 
+Live preview: https://toeic-path-next-preview.vercel.app
+
 N0–N1 foundation only. Next.js 16.4.6, React 19.3.1, TypeScript 5.9.3; Node 22.x. Versions are pinned in the local package lock. Standard Node server output (not static export).
 
 ## Run from this directory
@@ -34,3 +36,7 @@ Deploy this directory as a separate Next.js project (`apps/web` as Root Director
 The legacy GitHub Pages site remains production. A Vercel deployment of this separate project is a migration preview, even if Vercel labels the isolated project environment “production”. Do not point the main domain here before N6.
 
 N4 will add the public Supabase URL/key, server/browser adapters and callback exchange. Guest history cannot be read across origins; transfer requires explicit export/import.
+
+### Verified hosted preview
+
+Deployed 16/11/2026 to the separate `toeic-path-next-preview` project, application source `598963f`. Hosted HTTP route checks passed. The first Vercel deployment is labeled production inside this isolated preview project; GitHub Pages continues to serve the learning application. No Supabase callback or personal data is connected here yet. See `docs/migration/STATUS.md` in the repository for the deployment record and parity milestones.

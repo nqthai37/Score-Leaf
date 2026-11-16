@@ -6,7 +6,7 @@ Branch: migration/nextjs-foundation. Production Pages remains on main.
 | Milestone | Actual status |
 | --- | --- |
 | N0 | Complete: legacy source/database/audio tests, build/output tests and protected baseline hashes recorded. |
-| N1 | Local app implemented: App Router + TypeScript, server pages/layout, small client navigation/error boundaries, all target route entry points and responsive CSS. Production Node build and HTTP route checks pass. Vercel deployment pending account login. |
+| N1 | Local app implemented: App Router + TypeScript, server pages/layout, small client navigation/error boundaries, all target route entry points and responsive CSS. Production Node build and HTTP route checks pass. Vercel deployment complete: https://toeic-path-next-preview.vercel.app. Production HTTP route checks also pass against this hosted app. |
 | N2 | Not complete. Only public inventory summary and exact CSS/hero asset reuse added for N1; full typed domain/content/audio adapters are still to migrate. |
 | N3 | Not started: guest reducer, player, active-time hook and checkpoint parity. |
 | N4 | Not started: real Supabase browser/server auth, callback exchange, answer queue and online practice. |
@@ -26,9 +26,19 @@ Branch: migration/nextjs-foundation. Production Pages remains on main.
 
 ## Preview hosting
 
-User selected Vercel. CLI 65.16.0 reports logged out. A dry run of the official temporary-deployment option returned login_required and userActionRequired; no deployment was created. A person must complete Vercel's browser login before uploading this prepared app. Do not ask for an API token in chat or create a protection bypass token.
+User selected Vercel and completed a fresh device authorization for the official CLI. Preview project: `nqthai37s-projects/toeic-path-next-preview`.
 
-Vercel project root: apps/web. Runtime Node 22.x, Next.js preset. No environment variables needed for N1. Keep source on this migration branch until later parity milestones; leave Pages workflow unchanged.
+- Stable preview: https://toeic-path-next-preview.vercel.app
+- Immutable deployment: https://toeic-path-next-preview-5huw3nyps-nqthai37s-projects.vercel.app
+- Deployment ID: `dpl_BiNqS9LWDMoXoPV7JtCkZ7xvLH1m`, READY on 16/11/2026.
+- Deployed application source: `598963fa1df56458eba15960ce6fb6c14860ab1a` (later branch commits update documentation only).
+- GitHub Actions run `43753732222`: both `test` and `next-preview` passed.
+- Hosted `PREVIEW_BASE_URL=https://toeic-path-next-preview.vercel.app npm run test:routes`: passed, including direct/repeated route loads, callback, private session cache, 404/not-found view and SVG.
+- Browser: test-library navigation/refresh, dynamic session placeholder and dashboard artwork observed on Vercel; screenshot stored in workspace artifacts/previews/nextjs-vercel-preview.png.
+
+Vercel assigned the first deployment to the isolated project's production environment. It remains a migration preview; the current learning site continues on GitHub Pages. No domain cutover or Supabase redirect change occurred. Default deployment protection remains configured; the stable project alias served the preview to an unauthenticated HTTP request and sends `X-Robots-Tag: noindex, nofollow`.
+
+Project root: apps/web. Node 22.x configured, Next.js preset. No environment variables needed for N1. Deployment is manual through CLI; a Git-triggered Vercel deployment integration has not been configured. Authentication material stays in ignored local configuration and is never committed. No protection bypass secret was created.
 
 ## Next action after N1
 
