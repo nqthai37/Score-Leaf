@@ -1,4 +1,4 @@
-name: Deploy TOEIC Path to GitHub Pages
+name: Publish former-site migration notice
 
 on:
   push:
@@ -35,19 +35,19 @@ jobs:
       - name: Validate source and database
         run: npm test
 
-      - name: Build static website
-        run: npm run build
+      - name: Build migration notice
+        run: npm run pages:bridge
 
-      - name: Test deployment output
-        run: npm run test:build
+      - name: Verify migration notice
+        run: node --test tests/pages-bridge.test.mjs
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload static website
+      - name: Upload migration notice
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          path: .pages
 
       - name: Deploy to GitHub Pages
         id: deployment

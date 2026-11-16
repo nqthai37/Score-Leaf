@@ -15,10 +15,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - run: npm run build
+      - run: npm run legacy:build
       - run: npm run test:build
 
-  next-preview:
+  nextjs:
     runs-on: ubuntu-latest
     defaults:
       run:

@@ -1,59 +1,35 @@
 # Next.js migration status
 
-Updated 16/11/2026 (Asia/Saigon). Baseline: fd0583286830531c5c365c7fdca00405a8a3e259.
-N0–N1 developed on migration/nextjs-foundation; integrated into main on 16/11/2026. The Pages workflow continues serving the existing learning application from main; Next.js remains the separate Vercel preview.
+Updated 16/11/2026 (Asia/Saigon). The user expanded the former N0–N1 foundation task to a complete Next.js and Vercel migration.
 
-| Milestone | Actual status |
-| --- | --- |
-| N0 | Complete: legacy source/database/audio tests, build/output tests and protected baseline hashes recorded. |
-| N1 | Local app implemented: App Router + TypeScript, server pages/layout, small client navigation/error boundaries, all target route entry points and responsive CSS. Production Node build and HTTP route checks pass. Vercel deployment complete: https://toeic-path-next-preview.vercel.app. Production HTTP route checks also pass against this hosted app. |
-| N2 | Not complete. Only public inventory summary and exact CSS/hero asset reuse added for N1; full typed domain/content/audio adapters are still to migrate. |
-| N3 | Not started: guest reducer, player, active-time hook and checkpoint parity. |
-| N4 | Not started: real Supabase browser/server auth, callback exchange, answer queue and online practice. |
-| N5 | Not started: functional plan, review, vocabulary, progress, settings and provenance-aware import/export. Current pages disclose the preview and link to the current working site. |
-| N6 | Not started. No domain cutover, backend rewrite or production replacement. |
-| N7 | Deferred. No AI integration or paid calls. |
+## Implemented
 
-## Verification
+- Next.js App Router is the application runtime; routes render functional React learning views. No legacy HTML app or DOM bootstrap is embedded.
+- Public entry: two-column Vietnamese app introduction and login / registration tabs using Supabase email/password. Guest access remains explicit. Existing email-link sign-in is retained, with password setup in Settings.
+- All seven parts, 10 original mini tests, custom learning / timed challenge, reading sprint, diagnostic and daily sessions. Complete question groups stay intact.
+- Recorded Faye / Dmitri audio, playback rate, transcripts and cleanup on question / route changes. All 102 published WAV hashes and content IDs are retained.
+- Guest checkpoints and results; original deadlines on resume; in-place answer feedback. Server attempts use owner-checked RPCs, queued answer writes, revision conflicts, resumable snapshots and idempotent grading.
+- Account-scoped caches / progress sync, epoch fences, explicit guest import, backup preview / merge, provenance recalculation and unknown-version quarantine.
+- Active time uses visibility, idle and actual playback rules, monotonic intervals, local leases for guests and server leases / acknowledged outboxes for account attempts. Imported durations do not enter daily budgets.
+- Daily planner, 4/8/12-week routine, 1/3/7-day review, vocabulary, first/repeat/recall statistics and cloud history views.
+- Cookie-based browser/server Supabase clients, PKCE callback and session-refresh Proxy. Exact Vercel / localhost callbacks added, and Site URL changed to the Vercel origin in the existing Supabase Dashboard. Database schema and RLS remain unchanged.
+- Root dev/build/start commands run Next.js. Pages workflow publishes only the migration notice and local completed-history exporter. Old source remains a protected regression fixture and content authoring source, not a production runtime.
+- README rewritten as a project introduction with current demo, features, architecture, setup and honest limitations.
 
-- Existing `npm test`, `npm run build`, `npm run test:build`: pass before scaffolding.
-- Preview inventory test, strict TypeScript, production build: pass.
-- Production HTTP: every target page opened directly and repeatedly, unknown route, invalid session not-found UI, reserved callback stripping supplied code/return URL, no-store/no-referrer and SVG namespace verified.
-- Dynamic invalid attempt IDs can return HTTP 200 once Next.js has started streaming, while rendering the not-found view and noindex; this follows the installed Next.js contract and is not an authorization mechanism.
-- Browser QA: desktop navigation and 390×844 mobile menu, link transition closes menu, no horizontal overflow; viewport override reset afterward.
-- Hero SVG visual load confirmed after fixing its standalone XML namespace. Browser screenshots are in workspace artifacts/previews, outside source control.
-- Windows sandbox initially denied generated build directories; the normal production build and local HTTP checks passed when run with filesystem/network access. No operating system security settings changed.
+## Deployment
 
-## Preview hosting
+Primary application: https://toeic-path-next-preview.vercel.app. The existing Vercel project name stays unchanged to preserve its address. Deployment is through the authenticated official CLI; Git-triggered Vercel integration is not configured. Do not claim every Git push deploys automatically.
 
-User selected Vercel and completed a fresh device authorization for the official CLI. Preview project: `nqthai37s-projects/toeic-path-next-preview`.
+The GitHub Pages notice directs learners to Vercel and lets them export browser-local completed history before leaving the old origin. Cloud learners use the same Supabase account. Unfinished guest checkpoints cannot transfer through the completed-history importer. No browser data or database history is deleted during cutover.
 
-- Stable preview: https://toeic-path-next-preview.vercel.app
-- Immutable deployment: https://toeic-path-next-preview-5huw3nyps-nqthai37s-projects.vercel.app
-- Deployment ID: `dpl_BiNqS9LWDMoXoPV7JtCkZ7xvLH1m`, READY on 16/11/2026.
-- Deployed application source: `598963fa1df56458eba15960ce6fb6c14860ab1a` (the following cleanup removes unused preview CSS and adds the focused workspace).
-- GitHub Actions run `43753732222`: both `test` and `next-preview` passed.
-- Hosted `PREVIEW_BASE_URL=https://toeic-path-next-preview.vercel.app npm run test:routes`: passed, including direct/repeated route loads, callback, private session cache, 404/not-found view and SVG.
-- Browser: test-library navigation/refresh, dynamic session placeholder and dashboard artwork observed on Vercel; screenshot stored in workspace artifacts/previews/nextjs-vercel-preview.png.
+## Verification and remaining limits
 
-Vercel assigned the first deployment to the isolated project's production environment. It remains a migration preview; the current learning site continues on GitHub Pages. No domain cutover or Supabase redirect change occurred. Default deployment protection remains configured; the stable project alias served the preview to an unauthenticated HTTP request and sends `X-Robots-Tag: noindex, nofollow`.
+- Original domain / adapter / PostgreSQL tests passed, including synthetic user A/B/anonymous RLS and owner isolation.
+- Next content / migration tests cover hashes, group integrity and daily budget, import trust and deduplication, checkpoints / deadlines, answer retry acknowledgements and hidden / suspended active time.
+- Production build, TypeScript, eight Next tests and direct/repeated production route checks passed for the completed app and welcome page. Hosted route checks passed against Vercel; the final deployment is checked again after upload.
+- Browser: guest daily practice → select/check → save/leave → resume checked question → submit/results verified locally. Check feedback kept the measured scroll position unchanged when the check control was already visible.
+- Welcome page: login/register tabs, mismatch validation without sending a signup request, two-column desktop rendering and a single-column mobile layout verified on Vercel. Observed mobile document width and scroll width were both 375px: no horizontal overflow. Temporary viewport override was reset.
+- Owner completed real email-link sign-in on Vercel. Settings showed Saved to cloud and prior preferences; Progress rehydrated server-graded history and an existing submitted snapshot displayed the same 1/8 result. This was read-only validation of the pre-existing QA attempt, not a new learner assessment. Password fields are filled only by the owner; password login, new-account email confirmation and two-account cross-device QA remain to be exercised with real credentials.
+- No claim of manually listening to every recording. Difficulty calibration, full-length official exams, AI and React Native remain outside this release.
 
-Project root: apps/web. Node 22.x configured, Next.js preset. No environment variables needed for N1. Deployment is manual through CLI; a Git-triggered Vercel deployment integration has not been configured. Authentication material stays in ignored local configuration and is never committed. No protection bypass secret was created.
-
-## Next action after N1
-
-N2 should port pure domain modules incrementally, run baseline parity tests against selection/planning/import/review/activity behavior and preserve all IDs/versions. Then N3 must prove guest listening/reading → submit → results → reload/resume and stable player/timer cleanup before any production replacement.
-
-## Branch cleanup — 16/11/2026
-
-- Removed four unused CSS class families (including their responsive rules) from the Next.js-only stylesheet; legacy CSS copies and the baseline stay byte-identical.
-- Added a focused VS Code workspace for Next.js, Supabase and migration docs. Cache/dependency folders are excluded from its Explorer/search view.
-- Removed 87.6 MiB of local generated output: `dist`, `apps/web/.next`, `apps/web/tsconfig.tsbuildinfo` and `src/vendor`. Each target was checked to be ignored, untracked, inside the repository and free of linked descendants before removal. npm commands regenerate them; dependencies, local environment files and Vercel credentials were retained.
-- Baseline/inventory/CSS-copy checks, preview content test, TypeScript, production build and route checks passed; baseline also passed after artifact deletion.
-- Retained `src`, root tests/build scripts, audio assembly/provenance and Supabase migrations: each is still referenced by the current application, CI, inventory generation or later parity work. N1 does not replace the learning runtime yet.
-
-## Main integration — 16/11/2026
-
-- Reviewed the cleanup and retained all still-used legacy learning/domain/audio sources and Supabase migrations.
-- Integrated the foundation and focused workspace into main; no generated build artifacts or local credentials are tracked.
-- Validation workflow now also runs on pushes to main, so the Next.js app continues receiving build/type/route checks after integration. The existing Pages deployment workflow stays in place.
+See [deployment guide](../DEPLOYMENT.md) for current commands and migration / backup behavior. The original milestone plan and protected baseline remain available as history.

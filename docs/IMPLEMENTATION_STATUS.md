@@ -1,3 +1,5 @@
+> Current production runtime: Next.js on Vercel. This file records the earlier implementation history. See [current migration status](migration/STATUS.md) and [deployment guide](DEPLOYMENT.md).
+
 # Trạng thái thực hiện kế hoạch hợp nhất
 
 Cập nhật 13/11/2026. Kế hoạch gốc của người dùng được lưu nguyên văn trong `UNIFIED_PLAN.md`. File này ghi việc thực sự đã làm, không coi checklist kế hoạch là chức năng đã có.

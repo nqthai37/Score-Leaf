@@ -1,156 +1,99 @@
 # TOEIC Path
 
-Website luyện TOEIC Listening & Reading với 246 câu hỏi, 10 đề riêng biệt, lộ trình 4/8/12 tuần, sổ lỗi sai và thẻ từ vựng Anh–Việt. Tiến độ lưu trong trình duyệt; có thể xuất và nhập bản sao JSON trong Study preferences.
+A personal TOEIC Listening & Reading practice app for building a consistent study routine over **4, 8 or 12 weeks**. It combines original practice questions, recorded conversations, spaced mistake review and progress tracking in one study space.
 
-## Mở ứng dụng Next.js trong VS Code
+**[Try the live app](https://toeic-path-next-preview.vercel.app)** · [Source code](https://github.com/nqthai37/toeic-path) · [Development & deployment](docs/DEPLOYMENT.md)
 
-Bản Next.js N0–N1 được ghép vào `main` từ nhánh `migration/nextjs-foundation`. Mở **[TOEIC Path.code-workspace](TOEIC%20Path.code-workspace)** bằng File → Open Workspace from File. Workspace hiển thị Next.js, Supabase và tài liệu migration; ẩn dependency/cache khỏi Explorer.
+The welcome page introduces the app beside an email/password **sign-in and sign-up** form. Visitors can also try guest practice before creating an account.
 
-Ứng dụng Next.js nằm trong `apps/web`. Chạy từ root repository:
+## What you can do
 
-```bash
-npm --prefix apps/web ci
-npm run web:dev
+- **Practice all seven parts:** 246 original questions, passages, illustrations and authored explanations. Shared conversations and passages stay together when sessions are assembled.
+- **Train under a deadline:** 10 disjoint mini tests of 20 questions each, a 12-minute reading sprint and a 15-minute custom challenge. Learning mode lets you check answers as you go.
+- **Listen to natural conversations:** 102 prerecorded HeyGen clips featuring **Faye and Dmitri**, including listening passages, 24 vocabulary items and voice previews. Playback supports speed adjustment without changing the voices.
+- **Follow a personal routine:** choose a preparation length, target and daily study time. Daily suggestions combine due review, areas with enough first-answer evidence and new material.
+- **Build recall:** mistakes return on a 1, 3 and 7-day schedule. Early repetitions do not count as spaced recall.
+- **Keep your work:** resume a saved session, sign in with email and password (or an email link), synchronize account progress and export or merge backups. Guest and account data stay separate unless you explicitly import.
+- **Understand your progress:** view first answers, repeated practice, spaced recall and estimated active study time separately.
+
+## Built with
+
+| Layer | Technology |
+| --- | --- |
+| Application | Next.js App Router, React, TypeScript |
+| Authentication | Supabase Auth, email/password, PKCE email links, cookie-based session helpers |
+| Backend | Supabase PostgreSQL, Row Level Security, owner-checked RPCs |
+| Audio | Prerecorded HeyGen WAV assets with stable IDs and SHA-256 hashes |
+| Hosting | Vercel |
+| Validation | Node.js tests, TypeScript, production route checks, PostgreSQL tests with PGlite, GitHub Actions |
+
+The React application owns navigation, quiz state, playback and device checkpoints. Signed-in attempts use server-side grading, revision checks and idempotent submission. An ordered answer queue retains pending choices through temporary network failures. Account changes fence off late responses from the previous session.
+
+```mermaid
+flowchart LR
+  UI[Next.js / React] --> Local[Device checkpoints & backups]
+  UI --> Auth[Supabase Auth]
+  UI --> RPC[Owner-checked PostgreSQL RPCs]
+  Auth --> RPC
+  RPC --> DB[Attempts, results & progress with RLS]
+  UI --> Audio[Recorded Faye & Dmitri audio]
 ```
 
-Preview: https://toeic-path-next-preview.vercel.app. Hiện mới hoàn thành N0–N1; `src/`, tests và công cụ bản Pages vẫn là nguồn học liệu, baseline và rollback cho N2–N5. Chỉ xóa từng phần sau khi có chức năng thay thế và kiểm tra tương đương. Xem [trạng thái migration](docs/migration/STATUS.md).
+## Run locally
 
-## Cấu trúc thư mục
+Requires **Node.js 22**.
+
+```sh
+npm ci
+npm --prefix apps/web ci
+npm run dev
+```
+
+Open **http://127.0.0.1:3000**. To run a production build:
+
+```sh
+npm run build
+npm start
+```
+
+The deployed Supabase project's public configuration is already present. To use another project, set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `apps/web/.env.local`, apply the SQL migrations and seed, and configure the callback URLs. Never use a service-role key in browser code. See [deployment instructions](docs/DEPLOYMENT.md).
+
+## Project structure
 
 ```text
-toeic-path/
-├── apps/web/                    # Ứng dụng Next.js App Router + TypeScript
-├── supabase/                    # Schema, migrations và seed dùng chung
-├── docs/migration/              # Baseline và trạng thái migration
-├── src/                         # Bản Pages: học liệu và hành vi đang được kế thừa
-│   ├── index.html               # Khung trang và thứ tự tải script
-│   ├── styles/
-│   │   ├── main.css             # Giao diện chung và responsive
-│   │   └── library.css          # Giao diện thư viện đề thi
-│   ├── js/
-│   │   ├── audio.js             # Phát file Faye/Dmitri, tốc độ và hủy phát
-│   │   ├── app.js               # Điều hướng, bài thi, chấm điểm, lưu tiến độ
-│   │   └── practice-library.js  # Thư viện đề và chọn câu hỏi luyện tập
-│   └── data/
-│       ├── questions.js         # Ngân hàng gốc, từ vựng và thông tin 7 phần
-│       ├── practice-sets.js     # 10 đề bổ sung và dữ liệu minh họa
-│       ├── heygen-part3.js      # 13 hội thoại Part 3
-│       └── heygen-extra.js      # 89 bản thu còn lại
-├── scripts/
-│   ├── build.mjs                # Tạo dist từ src
-│   └── serve.mjs                # Server phát triển hoặc xem bản build
-├── tests/
-│   ├── audio.test.cjs           # Giọng đọc, thứ tự hội thoại và hủy phát
-│   └── practice.test.cjs        # Kiểm tra đường dẫn, dữ liệu và chức năng
-├── dist/                        # Sinh tự động; không sửa trực tiếp, không đưa vào Git
-├── .gitignore
-├── package.json
-└── README.md
+apps/web/
+  app/                 Next.js routes and authentication callback
+  src/components/      React learning views, quiz, audio and activity tracking
+  src/lib/             Shared types, storage helpers and Supabase clients
+  src/generated/       Versioned content and preserved domain rules
+  public/              Illustrations and recorded audio
+  tests/               Migration, content and behavior tests
+supabase/
+  migrations/          Database schema, RLS, RPCs and additive migrations
+  seed.sql             Original question and audio catalog
+src/                   Authored content and original migration reference fixtures
+scripts/               Content generation, validation and migration notice build
+tests/                 Domain, adapter and database regression tests
+docs/                  Design notes, verification and migration history
 ```
 
-Repository chứa source, scripts và tests; file build và ảnh kiểm tra cục bộ không được đưa vào Git.
+The production application is entirely served by **Next.js on Vercel**. GitHub Pages is retained only as a migration notice and local history exporter for learners arriving from the former address. The previous static application remains in source for regression checks; it is not loaded by the React app.
 
-## Chạy và kiểm tra
+## Check the project
 
-Yêu cầu Node.js 20 trở lên. Chạy `npm ci` để cài công cụ kiểm thử PostgreSQL cục bộ; frontend vẫn phục vụ file tĩnh.
-
-```bash
-npm ci
-npm run dev         # Phục vụ src tại http://127.0.0.1:4174
-npm test            # Kiểm tra mã nguồn, dữ liệu và đường dẫn asset
-npm run build       # Tạo lại dist từ src
-npm run test:build  # Kiểm tra bản build dùng để triển khai
-npm run preview     # Phục vụ dist tại http://127.0.0.1:4174
+```sh
+npm test
+npm run migration:check
+npm run web:test
+npm run build
+npm run web:typecheck
+npm run web:test:routes
 ```
 
-Sau khi sửa file trong `src`, tải lại trang khi chạy `dev`. Chạy lại `build` trước khi dùng `preview` hoặc triển khai. Có thể đổi cổng bằng biến môi trường `PORT`.
+Tests cover content identities and audio integrity, complete-group selection, active time, import provenance, spaced review, queued writes, revision conflicts, private answer keys, ownership, RLS, server grading and duplicate submission. The deployment guide lists the additional legacy parity and migration-notice checks.
 
-## Dữ liệu và triển khai
+## Scope
 
-Giữ nguyên ID câu hỏi và khóa localStorage để bảo toàn tiến độ, sổ lỗi sai và các bản sao trước đây. Mỗi đề mới có 20 câu thuộc đủ 7 phần và không trùng nhau giữa 10 đề. Bài luyện tùy chọn có 10/20/30/50 câu, ưu tiên câu chưa trả lời rồi đến câu luyện lâu nhất.
+TOEIC Path is an independent educational portfolio project. It is **not affiliated with ETS**, does not contain official test items and does not provide a calibrated TOEIC score prediction. The mini tests are shorter than the real exam. Active time is an engagement estimate; skill labels and question difficulty are not fully calibrated. Guest answer keys are part of the public learning content, so the app is designed for self-study rather than secure examinations.
 
-
-Âm thanh dùng file HeyGen tạo sẵn với Faye (nữ) và Dmitri (nam); Part 1 dùng hình minh họa. Đây là bài luyện độc lập, không phải đề TOEIC chính thức đầy đủ và không quy đổi phần trăm thành điểm TOEIC. Google Fonts là tùy chọn, có font hệ thống thay thế.
-
-Trong bài nghe, mở **Voice settings · Faye & Dmitri** để nghe thử hai giọng và đổi tốc độ. Lựa chọn tốc độ được lưu trên thiết bị; giữ tốc độ đã lưu từ bản cũ. Website phát file tại chỗ, không cần API key ở trình duyệt và không tự đổi sang giọng hệ điều hành khi file lỗi.
-
-## Đưa lên GitHub Pages
-
-Workflow có sẵn tại `.github/workflows/deploy-pages.yml`. Đưa nội dung của thư mục `toeic-path` lên gốc repository GitHub (có `package.json`, `src` và `.github` ngay ở gốc). Với GitHub Free, dùng repository public.
-
-Trong repository, vào **Settings → Pages → Build and deployment → Source** và chọn **GitHub Actions**. Sau đó push nhánh `main`, hoặc mở **Actions → Deploy TOEIC Path to GitHub Pages → Run workflow**. Workflow kiểm tra source, tạo `dist`, kiểm tra bản build và triển khai tự động. Không cần đưa `dist` vào Git, cài dependency hay tạo personal access token cho workflow.
-
-Repository GitHub: https://github.com/nqthai37/toeic-path
-
-Các lần cập nhật tiếp theo:
-
-```powershell
-git add src scripts tests package.json README.md
-git commit -m "feat: describe the change"
-git push origin main
-```
-
-Website trên Pages không có cổng đăng nhập ChatGPT của Sites. Tiến độ vẫn lưu riêng trong từng trình duyệt và theo địa chỉ website; dùng Export/Import trong Study preferences để chuyển tiến độ từ địa chỉ Sites sang Pages.
-
-Tài liệu: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
-
-## Giọng HeyGen cho toàn bộ nội dung
-
-Nhánh `fix-voice` có **102 bản thu**: 76 đoạn nghe khác nhau cho toàn bộ Part 1–4, 24 mục từ vựng và 2 mẫu giọng. Tái sử dụng 13 hội thoại Part 3 đã có, bổ sung 89 bản thu. Câu hỏi dùng chung đoạn nghe tham chiếu chung file. File nằm trong `src/assets/audio/heygen-part3/` và `src/assets/audio/heygen-extra/`; manifest nằm trong `src/data/heygen-part3.js` và `src/data/heygen-extra.js`.
-
-- Faye đọc Part 1, Part 4, từ vựng và câu hỏi Part 2; Dmitri đọc các lựa chọn trả lời Part 2.
-- Part 3: Woman/Assistant dùng Faye, Man/Customer dùng Dmitri, không đọc nhãn vai.
-- Giữ Play/Stop, nghe thử từng giọng và bốn mức tốc độ. Stop, chuyển câu hoặc phát file mới hủy file cũ; callback cũ không ảnh hưởng file mới.
-- Website không gọi HeyGen khi người dùng nhấn nghe. Nếu file không tải được, trang cho thử lại hoặc đọc transcript.
-
-`docs/heygen-part3-provenance.json` và `docs/heygen-all-voices-provenance.json` ghi voice ID, script, tham số, hash file và ánh xạ cắt/ghép theo mốc ký tự thực của HeyGen. Bản gốc PCM/timing được giữ tại thư mục artifacts cục bộ, không đưa signed URL vào repo. Các script sau chỉ ghép từ bản gốc, không dùng quota:
-
-```bash
-python scripts/assemble-heygen-part3.py --input <thu-muc-ban-goc-part3>
-python scripts/assemble-heygen-remaining.py --input <thu-muc-ban-goc-con-lai>
-```
-
-Giữ tốc độ/pitch nguồn khi ghép, thêm 0.18 giây giữa các lượt. Đã đối chiếu text đầu vào với mốc ký tự, kiểm tra WAV, hash, thời lượng và đoạn không im lặng. Chưa có vòng nghe thủ công toàn bộ 102 bản thu; kiểm tra dữ liệu không thay thế đánh giá nghe về phát âm.
-
-## Kế hoạch React Native + Supabase
-
-Xem [kế hoạch migration](docs/REACT_NATIVE_SUPABASE_PLAN.md): Expo/React Native/TypeScript, Supabase Auth/Postgres/Storage, RLS, chấm bài phía server, đồng bộ offline và nhập tiến độ từ web. Dự kiến MVP 2–4 tuần cho một lập trình viên, điều chỉnh sau PoC và chưa gồm xét duyệt app store. App native chưa triển khai; Supabase đã phục vụ bản web. Lộ trình hiện tại ưu tiên Next.js trước mobile, xem docs/migration/STATUS.md.
-
-## Lịch sử chức năng
-
-Xem [kế hoạch và các mốc commit](docs/FEATURE_HISTORY.md). Các commit được tổ chức lại từ những bản source đã có; source ứng dụng ở commit cuối giữ nguyên so với bản đang triển khai.
-
-## Triển khai kế hoạch hợp nhất
-
-Kế hoạch hiện hành: [UNIFIED_PLAN.md](docs/UNIFIED_PLAN.md); [trạng thái thực hiện và bằng chứng](docs/IMPLEMENTATION_STATUS.md). Kế hoạch này thay ưu tiên mobile trước bằng web trước.
-
-- `src/domain/core.js`: logic thuần, không phụ thuộc DOM/localStorage; chọn nguyên nhóm, tính thời gian chung một lần, chấm điểm, tách lần đầu/làm lại và kiểm tra/merge backup.
-- `src/data/content-bindings.json`: ID nhóm/audio khai báo riêng, không phụ thuộc nguyên văn transcript. `content-metadata.js` được sinh bằng `npm run content:generate`, kiểm tra bằng `npm run content:check`.
-- Có 154 nhóm, 246 content versions, 102 audio IDs. Chỉ 12 nhãn kỹ năng grammar đã đối chiếu câu hỏi/lời giải; các câu khác ghi rõ `format-only`, độ khó chưa hiệu chuẩn (`null`). Thời gian là ước lượng, chưa đo thực nghiệm.
-- Phiên đang làm lưu riêng trên thiết bị; Overview có Resume. Giữ thời hạn timed khi resume, giữ trạng thái đã check và lời giải. Bản web local không chống việc đổi giờ máy; backend dùng thời gian server.
-- Backup JSON v1 được xem số bản ghi trước khi merge, không thay mục tiêu đang dùng, không nhân đôi session và không xóa lịch sử hiện có. Dữ liệu cũ chưa kiểm chứng ghi `legacy_import`, `server_graded=false`.
-- `supabase/migrations/` và `supabase/seed.sql`: nền backend với RLS, snapshot bài, chấm điểm server và kiểm tra revision. Đã nối Auth email/PKCE và backup tiến độ theo tài khoản; xem [hướng dẫn kết nối](supabase/README.md).
-
-`npm test` gồm cả PostgreSQL/PGlite: tài khoản A/B/anonymous, quyền dữ liệu con, đáp án riêng, điểm server, option sai, hết hạn và submit/start lặp. PGlite mô phỏng `auth.uid()` để kiểm tra SQL; không thay thế kiểm thử Auth/API trên project Supabase thật.
-
-## Kết nối Supabase trên web tĩnh
-
-Website vẫn chạy trên GitHub Pages. Dùng `@supabase/supabase-js`, không dùng helper Next.js, `@supabase/ssr` hay middleware server vì hosting hiện tại phục vụ file tĩnh. SDK tự quản lý refresh phiên trong trình duyệt.
-
-`src/config.js` chứa Project URL và publishable key công khai. `.env.local` (ignored) có thể cung cấp `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; bước vendor/build đọc hai giá trị này và chỉ chấp nhận publishable key. `scripts/vendor.mjs` đóng gói SDK từ lockfile, không phụ thuộc CDN lúc chạy. Thư mục `src/vendor/` sinh tự động, không đưa vào Git; `npm test`, `npm run dev`, `npm run build` chuẩn bị SDK.
-
-Trong Study preferences, nhập email và mở link trong cùng trình duyệt để hoàn thành PKCE. Dữ liệu khách và từng tài khoản dùng khóa local khác nhau; không tự upload lịch sử khách. Có thể chọn nhập lịch sử khách sau đăng nhập.
-
-`progress_snapshots` là backup kết quả **luyện tập client**, không phải điểm server đã xác minh. Backup giữ mục tiêu, lịch sử, sổ lỗi, từ vựng và phiên đang làm. Luồng chấm bài qua RPC server đã có riêng; chưa thay luồng quiz local bằng luồng đó. Không gán `server_graded=true` cho backup.
-
-Mỗi lần lưu dùng revision và account guard. Mất mạng/HTTP lỗi không báo đã lưu cloud; dữ liệu local giữ nguyên. Khi xung đột, UI yêu cầu tải bản cloud, giữ bản local trước đó tại khóa `<account>-before-reload`. Không ghi đè âm thầm giữa hai thiết bị.
-
-### Learning data update — 15 November 2026
-
-Active study time now uses a separate, retry-safe ledger instead of elapsed start-to-submit time. The daily budget includes recorded time from open sessions; legacy durations remain estimates. Imports are recalculated only against a matching content version, and unknown-version history is excluded from skill/review evidence. Spaced review uses an experimental 1 → 3 → 7 day rule, independently from first-answer accuracy.
-
-See [verification](docs/SYNC_VERIFICATION.md) for automated results and pending real-account/device acceptance. AI is deferred for this iteration by the user.
-
-### Next.js migration preview
-
-A separate App Router + TypeScript foundation lives in [apps/web](apps/web/README.md) on `migration/nextjs-foundation`. The current Pages application is retained. See [baseline](docs/migration/BASELINE.md), [migration status](docs/migration/STATUS.md), and [the supplied plan](docs/migration/NEXTJS_PLAN.md). Run `npm run migration:check` to verify preserved legacy identities and adapters.
+AI explanations and a React Native client are outside this release. The repository documents the current implementation and verification limits in [deployment notes](docs/DEPLOYMENT.md) and [migration status](docs/migration/STATUS.md).
