@@ -1,6 +1,8 @@
 import { AuthPage } from "@/components/auth-page";
 import { safeReturnPath } from "@/lib/auth-navigation";
-export const metadata = { title: "TOEIC Path — Practice at your own pace" };
+export const metadata = {
+  title: { absolute: "ScoreLeaf — Practice at your own pace" },
+};
 export default async function Page({
   searchParams,
 }: {

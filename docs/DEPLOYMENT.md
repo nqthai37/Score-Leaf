@@ -1,6 +1,6 @@
 # Next.js deployment
 
-The primary application is `apps/web`, hosted at https://toeic-path-next-preview.vercel.app. The project keeps its original Vercel name for URL continuity; it is now a complete application, not the former N1 catalog preview.
+The primary application is `apps/web`, hosted at https://scoreleaf.vercel.app. The Vercel project is named `scoreleaf`; the existing Supabase project and learning data are unchanged.
 
 ## Local development
 
@@ -20,11 +20,11 @@ Public Supabase configuration is in `apps/web/src/lib/supabase/config.ts`, with 
 
 - Framework: Next.js; root directory: `apps/web`.
 - Install: `npm ci`; build: `npm run build`; output: Next.js default.
-- Existing project: `nqthai37s-projects/toeic-path-next-preview`.
+- Existing project: `nqthai37s-projects/scoreleaf`.
 - Deploy from `apps/web` using the authenticated Vercel CLI. This workspace keeps its CLI credentials in ignored `.vercel/auth`; do not commit or copy that directory.
 
 ```sh
-npm exec --yes --package=vercel@65.16.0 -- vercel deploy --prod --yes --project toeic-path-next-preview --scope nqthai37s-projects --global-config .vercel/auth
+npm exec --yes --package=vercel@65.16.0 -- vercel deploy --prod --yes --project scoreleaf --scope nqthai37s-projects --global-config .vercel/auth
 ```
 
 Deployments are currently performed with the CLI. GitHub Actions validates pushes; it does not hold a Vercel deployment token. Automatic deployment on Git pushes requires connecting the repository in Vercel's Git settings using the owner's GitHub authorization.
@@ -33,9 +33,9 @@ Deployments are currently performed with the CLI. GitHub Actions validates pushe
 
 The public entry page offers email/password login and registration; existing email-link users can request a link directly on the public sign-in page, then set a password in Settings. The app uses `@supabase/ssr` cookie clients, a PKCE exchange at `/auth/callback`, and session refresh and authentication checks in Next.js Proxy. All learning routes also sit behind the server layout in `app/(protected)`; signed-out client views are hidden immediately. See [access rules](AUTH_ACCESS.md). Personal learning data is loaded in the account-scoped client adapter; ownership is checked again by PostgreSQL RLS and RPCs. No personalized response uses a shared CDN cache.
 
-Current Supabase Site URL: `https://toeic-path-next-preview.vercel.app/`. Exact allowed callback URLs:
+Current Supabase Site URL: `https://scoreleaf.vercel.app/`. Exact allowed callback URLs:
 
-- `https://toeic-path-next-preview.vercel.app/auth/callback`
+- `https://scoreleaf.vercel.app/auth/callback`
 - `http://127.0.0.1:3000/auth/callback`
 - `http://localhost:3000/auth/callback`
 

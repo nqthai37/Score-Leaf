@@ -6,7 +6,9 @@ import "@/styles/profile.css";
 import { AppShell } from "@/components/app-shell";
 import { StudyProvider } from "@/components/study-provider";
 export const metadata: Metadata = {
-  title: { default: "TOEIC Path", template: "%s · TOEIC Path" },
+  applicationName: "ScoreLeaf",
+  metadataBase: new URL("https://scoreleaf.vercel.app"),
+  title: { default: "ScoreLeaf", template: "%s · ScoreLeaf" },
   description:
     "TOEIC practice for your next opportunity. Original questions, listening, spaced review and a personal study plan.",
   robots: { index: false, follow: false },

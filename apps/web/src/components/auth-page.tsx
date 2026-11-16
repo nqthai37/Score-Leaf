@@ -125,13 +125,13 @@ export function AuthPage({
         <Link className="brand" href="/">
           <img
             className="brand-logo"
-            src="/branding/toeic-path-logo.png"
+            src="/branding/scoreleaf-logo.png"
             width={40}
             height={40}
             alt=""
             aria-hidden="true"
           />
-          TOEIC<span>path</span>
+          Score<span>Leaf</span>
         </Link>
         <div className="auth-intro-copy">
           <span className="auth-kicker">SMALL STEPS. REAL PROGRESS.</span>

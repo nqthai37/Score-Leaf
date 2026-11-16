@@ -728,7 +728,7 @@ export function Settings() {
       url = URL.createObjectURL(blob),
       a = document.createElement("a");
     a.href = url;
-    a.download = "toeic-path-backup-" + day() + ".json";
+    a.download = "scoreleaf-backup-" + day() + ".json";
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }

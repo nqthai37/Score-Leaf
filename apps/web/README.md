@@ -1,6 +1,6 @@
-# TOEIC Path — Next.js application
+# ScoreLeaf — Next.js application
 
-This is the complete production application hosted on [Vercel](https://toeic-path-next-preview.vercel.app). The project retains its original deployment name for address continuity.
+This is the complete production application hosted on [Vercel](https://scoreleaf.vercel.app). The Vercel project is named `scoreleaf`.
 
 - App Router + React + TypeScript; Node.js 22.
 - Welcome page: introduction beside email/password login and registration. Existing email-link users can set a password from Settings after signing in.

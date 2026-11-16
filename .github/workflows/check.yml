@@ -1,4 +1,4 @@
-name: Validate TOEIC Path
+name: Validate ScoreLeaf
 on:
   pull_request:
   push:

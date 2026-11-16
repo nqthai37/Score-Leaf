@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 // Keep the supplied artwork unchanged; derive browser-size copies from it.
 const source = await readFile(
-  new URL("../public/branding/toeic-path-logo.png", import.meta.url),
+  new URL("../public/branding/scoreleaf-logo.png", import.meta.url),
 );
 await sharp(source)
   .resize(192, 192)

@@ -8,7 +8,7 @@ const html = await readFile(
 );
 test("former origin exports progress without auth storage or cross-origin transmission", () => {
   assert.ok(
-    html.includes("https://toeic-path-next-preview.vercel.app/"),
+    html.includes("https://scoreleaf.vercel.app/"),
   );
   const listeners = {},
     options = [],

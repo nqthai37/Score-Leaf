@@ -1,8 +1,8 @@
-# TOEIC Path
+# ScoreLeaf
 
 A personal TOEIC Listening & Reading practice app for building a consistent study routine over **4, 8 or 12 weeks**. It combines original practice questions, recorded conversations, spaced mistake review and progress tracking in one study space.
 
-**[Try the live app](https://toeic-path-next-preview.vercel.app)** · [Source code](https://github.com/nqthai37/toeic-path) · [Development & deployment](docs/DEPLOYMENT.md)
+**[Try the live app](https://scoreleaf.vercel.app)** · [Source code](https://github.com/nqthai37/toeic-path) · [Development & deployment](docs/DEPLOYMENT.md)
 
 The English welcome page introduces the app beside an email/password **sign-in and sign-up** form. A verified account is required to access every learning page, including through direct URLs.
 
@@ -95,6 +95,6 @@ Tests cover content identities and audio integrity, complete-group selection, ac
 
 ## Scope
 
-TOEIC Path is an independent educational portfolio project. It is **not affiliated with ETS**, does not contain official test items and does not provide a calibrated TOEIC score prediction. The mini tests are shorter than the real exam. Active time is an engagement estimate; skill labels and question difficulty are not fully calibrated. Practice content is delivered to the browser, so the app is designed for self-study rather than secure examinations.
+ScoreLeaf is an independent educational portfolio project. It is **not affiliated with ETS**, does not contain official test items and does not provide a calibrated TOEIC score prediction. The mini tests are shorter than the real exam. Active time is an engagement estimate; skill labels and question difficulty are not fully calibrated. Practice content is delivered to the browser, so the app is designed for self-study rather than secure examinations.
 
 AI explanations and a React Native client are outside this release. The repository documents the current implementation and verification limits in [deployment notes](docs/DEPLOYMENT.md) and [migration status](docs/migration/STATUS.md).
