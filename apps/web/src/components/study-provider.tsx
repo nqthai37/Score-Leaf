@@ -9,6 +9,7 @@ import {
 } from "react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
+import { authCallbackUrl, authOriginRedirect } from "@/lib/site-url";
 import {
   createCloudRepository,
   createProgressSync,
@@ -325,7 +326,12 @@ export function StudyProvider({ children }: { children: ReactNode }) {
     setNotice,
     setDays,
     signin: async (email) => {
-      await repo.signIn(email, location.origin + "/auth/callback");
+      const destination = authOriginRedirect(location.origin, "/settings");
+      if (destination) {
+        window.location.assign(destination);
+        return;
+      }
+      await repo.signIn(email, authCallbackUrl(location.origin, "/settings"));
       setNotice("Check your email. Open the sign-in link in this browser.");
     },
     signout: async () => {

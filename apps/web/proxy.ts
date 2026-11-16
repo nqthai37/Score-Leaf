@@ -2,7 +2,10 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { supabaseUrl, supabaseKey } from "./src/lib/supabase/config";
 import { isProtectedPath, signInPath } from "./src/lib/auth-navigation";
+import { formerHostRedirect } from "./src/lib/site-url";
 export async function proxy(request: NextRequest) {
+  const canonical = formerHostRedirect(request.url);
+  if (canonical) return NextResponse.redirect(canonical, 308);
   let response = NextResponse.next({ request });
   const supabase = createServerClient(supabaseUrl, supabaseKey, {
     cookies: {

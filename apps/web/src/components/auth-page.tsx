@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useStudy } from "./study-provider";
+import { authCallbackUrl, authOriginRedirect } from "@/lib/site-url";
 export function AuthPage({
   nextPath = "/dashboard",
   signInError = false,
@@ -35,6 +36,11 @@ export function AuthPage({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
+    const destination = authOriginRedirect(location.origin, nextPath);
+    if (destination) {
+      window.location.replace(destination);
+      return;
+    }
     setError("");
     setMessage("");
     if (mode === "register" && password !== confirm) {
@@ -56,10 +62,7 @@ export function AuthPage({
           email: email.trim(),
           password,
           options: {
-            emailRedirectTo:
-              location.origin +
-              "/auth/callback?next=" +
-              encodeURIComponent(nextPath),
+            emailRedirectTo: authCallbackUrl(location.origin, nextPath),
           },
         });
         if (error) throw error;
@@ -94,6 +97,11 @@ export function AuthPage({
   async function sendLink(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
+    const destination = authOriginRedirect(location.origin, nextPath);
+    if (destination) {
+      window.location.replace(destination);
+      return;
+    }
     setBusy(true);
     setError("");
     setMessage("");
@@ -101,10 +109,7 @@ export function AuthPage({
       const { error } = await client.auth.signInWithOtp({
         email: email.trim(),
         options: {
-          emailRedirectTo:
-            location.origin +
-            "/auth/callback?next=" +
-            encodeURIComponent(nextPath),
+          emailRedirectTo: authCallbackUrl(location.origin, nextPath),
         },
       });
       if (error) throw error;

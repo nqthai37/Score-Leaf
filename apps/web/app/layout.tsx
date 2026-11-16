@@ -5,9 +5,10 @@ import "./globals.css";
 import "@/styles/profile.css";
 import { AppShell } from "@/components/app-shell";
 import { StudyProvider } from "@/components/study-provider";
+import { APP_ORIGIN } from "@/lib/site-url";
 export const metadata: Metadata = {
   applicationName: "ScoreLeaf",
-  metadataBase: new URL("https://scoreleaf.vercel.app"),
+  metadataBase: new URL(APP_ORIGIN),
   title: { default: "ScoreLeaf", template: "%s · ScoreLeaf" },
   description:
     "TOEIC practice for your next opportunity. Original questions, listening, spaced review and a personal study plan.",
