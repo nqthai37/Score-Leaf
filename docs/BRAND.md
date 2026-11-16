@@ -6,4 +6,4 @@ The book-and-leaf artwork supplied by the owner is stored unchanged at `apps/web
 
 The existing Vercel project was renamed to `scoreleaf`, and `scoreleaf.vercel.app` was attached as a production domain so it follows deployments. The Supabase project remains the same. Auth Site URL and the allowed callback include the new production address; the previous callback is retained for transition.
 
-Internal storage keys, backup `app` identifiers, content IDs and the database remain compatible with TOEIC Path. Existing backups still import correctly. The GitHub source repository keeps its existing URL. A new website origin requires signing in again; cloud progress belongs to the same account and is preserved.
+Internal storage keys, backup `app` identifiers, content IDs and the database remain compatible with TOEIC Path. Existing backups still import correctly. The GitHub source repository is now [nqthai37/Score-Leaf](https://github.com/nqthai37/Score-Leaf); GitHub redirects the former `toeic-path` repository URL. A new website origin requires signing in again; cloud progress belongs to the same account and is preserved.

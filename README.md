@@ -2,7 +2,7 @@
 
 A personal TOEIC Listening & Reading practice app for building a consistent study routine over **4, 8 or 12 weeks**. It combines original practice questions, recorded conversations, spaced mistake review and progress tracking in one study space.
 
-**[Try the live app](https://scoreleaf.vercel.app)** · [Source code](https://github.com/nqthai37/toeic-path) · [Development & deployment](docs/DEPLOYMENT.md)
+**[Try the live app](https://scoreleaf.vercel.app)** · [Source code](https://github.com/nqthai37/Score-Leaf) · [Development & deployment](docs/DEPLOYMENT.md)
 
 `main` is the single maintained demo branch. Open `ScoreLeaf.code-workspace` in VS Code for the app, backend and [project documentation](docs/README.md).
 
