@@ -11,3 +11,5 @@ The top-right avatar opens a profile card with an editable display name, prepara
 Migration: `supabase/migrations/202611160007_profile_streak.sql`. Apply once after migrations 001–006. The original migration baseline stays frozen; new additive migrations receive their own PostgreSQL tests.
 
 Validation: `node tests/profile-streak.test.mjs`, `npm run web:test`, `npm run build`, `npm run web:test:routes`. PostgreSQL tests cover date computation, consecutive days and gaps, repeat claims, names, anonymous access, RLS and account changes. Calendar tests include future starts, leap days and timezone midnight.
+
+React UI tests additionally cover immediate RPC replies, close/reopen during the 2.4-second animation, remount with an already claimed day, Escape dismissal and guest isolation. The additive migration was applied successfully to the existing Supabase project. Browser QA on Vercel confirmed the owner’s day 6/56 and streak 1, along with a 375px mobile document without horizontal overflow or avatar/menu overlap.

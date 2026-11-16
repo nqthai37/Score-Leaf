@@ -52,6 +52,14 @@ export function UserProfile() {
   profileRef.current = profile;
   openRef.current = open;
   const owner = user?.id ?? null;
+  function changeOpen(value: boolean) {
+    openRef.current = value;
+    setOpen(value);
+    if (!value) {
+      setCelebrating(false);
+      setEditing(false);
+    }
+  }
   async function touch() {
     if (!owner || request.current) return request.current;
     const version = mutationVersion.current;
@@ -107,11 +115,11 @@ export function UserProfile() {
   useEffect(() => {
     if (!open) return;
     const outside = (e: PointerEvent) => {
-        if (!root.current?.contains(e.target as Node)) setOpen(false);
+        if (!root.current?.contains(e.target as Node)) changeOpen(false);
       },
       escape = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
-          setOpen(false);
+          changeOpen(false);
           trigger.current?.focus();
         }
       };
@@ -159,7 +167,7 @@ export function UserProfile() {
   }
   function toggle() {
     const next = !open;
-    setOpen(next);
+    changeOpen(next);
     if (next && owner) {
       const current = profileRef.current;
       if (
@@ -221,7 +229,7 @@ export function UserProfile() {
               className="profile-close"
               aria-label="Đóng hồ sơ"
               onClick={() => {
-                setOpen(false);
+                changeOpen(false);
                 trigger.current?.focus();
               }}
             >
@@ -404,7 +412,7 @@ export function UserProfile() {
                 onClick={async () => {
                   try {
                     await signout();
-                    setOpen(false);
+                    changeOpen(false);
                   } catch {
                     setError(
                       "Còn tiến độ chờ đồng bộ. Hãy xuất backup trong Cài đặt trước.",

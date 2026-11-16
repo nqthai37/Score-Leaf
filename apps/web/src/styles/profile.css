@@ -92,6 +92,9 @@
   height: 22px;
 }
 .profile-popover {
+  max-height: calc(100dvh - 90px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   position: absolute;
   top: calc(100% + 14px);
   right: 0;
