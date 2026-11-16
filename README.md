@@ -14,6 +14,7 @@ The welcome page introduces the app beside an email/password **sign-in and sign-
 - **Follow a personal routine:** choose a preparation length, target and daily study time. Daily suggestions combine due review, areas with enough first-answer evidence and new material.
 - **Build recall:** mistakes return on a 1, 3 and 7-day schedule. Early repetitions do not count as spaced recall.
 - **Keep your work:** resume a saved session, sign in with email and password (or an email link), synchronize account progress and export or merge backups. Guest and account data stay separate unless you explicitly import.
+- **Keep your daily flame:** open your avatar to see your display name, preparation day and consecutive login streak, with one daily flame animation per account.
 - **Understand your progress:** view first answers, repeated practice, spaced recall and estimated active study time separately.
 
 ## Built with

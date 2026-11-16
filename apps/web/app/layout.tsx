@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@/styles/legacy-main.css";
 import "@/styles/legacy-library.css";
 import "./globals.css";
+import "@/styles/profile.css";
 import { AppShell } from "@/components/app-shell";
 import { StudyProvider } from "@/components/study-provider";
 export const metadata: Metadata = {

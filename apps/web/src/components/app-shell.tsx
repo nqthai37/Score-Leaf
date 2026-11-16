@@ -2,9 +2,10 @@
 import { usePathname } from "next/navigation";
 import { Navigation, Breadcrumb } from "./navigation";
 import { useStudy } from "./study-provider";
+import { UserProfile } from "./user-profile";
 export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname(),
-    { ready } = useStudy();
+    { ready, user } = useStudy();
   if (path === "/" || path === "/login")
     return (
       <main className="auth-main" id="main-content">
@@ -17,9 +18,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="shell">
         <header>
           <Breadcrumb />
-          <span className="header-note">
-            <i />A little better, every day
-          </span>
+          <UserProfile key={user?.id ?? "guest"} />
         </header>
         <main id="main-content">
           {ready ? children : <p role="status">Loading your study space…</p>}

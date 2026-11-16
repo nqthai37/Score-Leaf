@@ -1,0 +1,32 @@
+import {PGlite} from '@electric-sql/pglite';
+import {readFile} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const db=new PGlite();
+const A='aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa',B='bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb';
+try {
+ await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth to authenticated;`);
+ for(const name of ['202611120001_learning_foundation','202611160007_profile_streak'])await db.exec(await readFile(new URL('../supabase/migrations/'+name+'.sql',import.meta.url),'utf8'));
+ await db.query('insert into auth.users values($1),($2)',[A,B]);
+ const as=async(user)=>{await db.exec('reset role;set role authenticated');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[user])};
+ const rpc=async(name,args=[])=>{const result=await db.query('select public.'+name+'('+args.map((_,i)=>'$'+(i+1)).join(',')+') as value',args);return result.rows[0].value};
+ await as(A);let summary=await rpc('touch_profile',[A]);const today=summary.today;
+ assert.equal(summary.streak,1);assert.equal(summary.celebrated_today,false);assert.equal(summary.timezone,'Asia/Ho_Chi_Minh');
+ await rpc('touch_profile',[A]);assert.equal((await db.query('select count(*)::int as count from public.profile_login_days')).rows[0].count,1,'Reload cannot add another login day');
+ assert.equal((await rpc('claim_profile_flame',[A])).celebrate,true);assert.equal((await rpc('claim_profile_flame',[A])).celebrate,false,'Another tab or device cannot replay the daily ignition');
+ assert.equal((await rpc('touch_profile',[A])).celebrated_today,true);
+ assert.equal((await rpc('save_profile_name',['  Thái Nguyễn  ',A])).display_name,'Thái Nguyễn');
+ await assert.rejects(()=>rpc('save_profile_name',[' ',A]),/1–60/);await assert.rejects(()=>rpc('save_profile_name',['x'.repeat(61),A]),/1–60/);
+ await db.exec('reset role');await db.query(`insert into public.profile_login_days(user_id,login_day) values($1,$2::date-1),($1,$2::date-2),($1,$2::date-4),($1,$2::date-5)`,[A,today]);
+ await as(A);assert.equal((await rpc('touch_profile',[A])).streak,3,'A missed day breaks the consecutive run');
+ await db.exec('reset role');await db.query('delete from public.profile_login_days where user_id=$1 and login_day=$2::date-1',[A,today]);
+ await as(A);assert.equal((await rpc('touch_profile',[A])).streak,1,'Returning after a gap starts at one');
+ await db.exec('reset role');await db.query('update public.profiles set timezone=$2 where user_id=$1',[A,'Pacific/Kiritimati']);
+ await as(A);summary=await rpc('touch_profile',[A]);assert.equal(summary.today,(await db.query("select (clock_timestamp() at time zone 'Pacific/Kiritimati')::date::text as today")).rows[0].today,'Calendar day is evaluated in the persisted profile timezone');
+ await as(B);assert.equal((await db.query('select count(*)::int as count from public.profile_login_days')).rows[0].count,0,'RLS hides another learner’s login days');
+ await assert.rejects(()=>rpc('touch_profile',[A]),/Account changed/);await assert.rejects(()=>rpc('claim_profile_flame',[A]),/Account changed/);await assert.rejects(()=>rpc('save_profile_name',['Overwrite A',A]),/Account changed/);
+ assert.equal((await rpc('claim_profile_flame',[B])).streak,1);assert.equal((await rpc('save_profile_name',['Learner B',B])).display_name,'Learner B');
+ await assert.rejects(()=>db.query('insert into public.profile_login_days(user_id,login_day) values($1,current_date-1)',[B]),/permission denied/);
+ await assert.rejects(()=>db.query('update public.profile_login_days set flame_opened_at=null'),/permission denied/);
+ await db.exec('reset role;set role anon');await assert.rejects(()=>rpc('touch_profile',[A]),/permission denied/);await assert.rejects(()=>rpc('claim_profile_flame',[A]),/permission denied/);
+ console.log('PASS: server-dated login streaks, gaps, timezone, daily flame idempotency, display names, owner fences and RLS.');
+} finally {await db.close()}
