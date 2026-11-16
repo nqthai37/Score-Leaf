@@ -4,20 +4,27 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useStudy } from "./study-provider";
-export function AuthPage() {
+export function AuthPage({
+  nextPath = "/dashboard",
+  signInError = false,
+}: { nextPath?: string; signInError?: boolean } = {}) {
   const [mode, setMode] = useState<"login" | "register">("login"),
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [confirm, setConfirm] = useState(""),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState(""),
-    [error, setError] = useState(""),
+    [error, setError] = useState(
+      signInError
+        ? "Your sign-in link is invalid or has expired. Please sign in again."
+        : "",
+    ),
     [client] = useState(createClient),
     { user, ready } = useStudy(),
     router = useRouter();
   useEffect(() => {
-    if (ready && user) router.replace("/dashboard");
-  }, [ready, user, router]);
+    if (ready && user) router.replace(nextPath);
+  }, [ready, user, router, nextPath]);
   function switchMode(next: "login" | "register") {
     setMode(next);
     setMessage("");
@@ -42,17 +49,22 @@ export function AuthPage() {
           password,
         });
         if (error) throw error;
-        router.replace("/dashboard");
+        router.replace(nextPath);
         router.refresh();
       } else {
         const { data, error } = await client.auth.signUp({
           email: email.trim(),
           password,
-          options: { emailRedirectTo: location.origin + "/auth/callback" },
+          options: {
+            emailRedirectTo:
+              location.origin +
+              "/auth/callback?next=" +
+              encodeURIComponent(nextPath),
+          },
         });
         if (error) throw error;
         if (data.session) {
-          router.replace("/dashboard");
+          router.replace(nextPath);
           router.refresh();
         } else {
           setMessage(
@@ -74,6 +86,34 @@ export function AuthPage() {
               : /already registered/i.test(text)
                 ? "This email already has an account. Please sign in."
                 : text || "Unable to connect. Please try again.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function sendLink(e: React.FormEvent) {
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const { error } = await client.auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          emailRedirectTo:
+            location.origin +
+            "/auth/callback?next=" +
+            encodeURIComponent(nextPath),
+        },
+      });
+      if (error) throw error;
+      setMessage("Check your email and open the sign-in link in this browser.");
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to send a sign-in link. Please try again.",
       );
     } finally {
       setBusy(false);
@@ -252,14 +292,32 @@ export function AuthPage() {
             </p>
           )}
           <details className="auth-magic">
-            <summary>Previously signed in with an email link?</summary>
+            <summary>Sign in with an email link instead</summary>
             <p>
-              You can still request a sign-in link in{" "}
-              <Link className="link" href="/settings">
-                Account settings
-              </Link>
-              . Sign in with your link, then set a password for future visits.
+              Open the link in this browser. You can set a password in Settings
+              after signing in.
             </p>
+            <form onSubmit={sendLink}>
+              <label htmlFor="link-email">
+                Email address for sign-in link
+                <input
+                  id="link-email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={busy}
+                />
+              </label>
+              <button
+                type="submit"
+                className="secondary"
+                disabled={busy || !ready}
+              >
+                {busy ? "Sending…" : "Email me a sign-in link"}
+              </button>
+            </form>
           </details>
         </div>
         <span className="auth-form-footer">A little better, every day. ✦</span>

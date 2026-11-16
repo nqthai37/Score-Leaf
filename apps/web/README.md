@@ -4,8 +4,8 @@ This is the complete production application hosted on [Vercel](https://toeic-pat
 
 - App Router + React + TypeScript; Node.js 22.
 - Welcome page: introduction beside email/password login and registration. Existing email-link users can set a password from Settings after signing in.
-- Functional guest and cloud practice, recorded audio, checkpoints, timed attempts, review, vocabulary, progress and backup import/export.
-- Supabase cookie authentication, server callback and owner-checked RPCs.
+- Authenticated practice, recorded audio, checkpoints, timed attempts, review, vocabulary, progress and backup import/export.
+- Supabase cookie authentication, server callback, server-protected learning routes and owner-checked RPCs.
 - Generated content and preserved pure domain modules have stable identities and versioned assets. No legacy DOM app is bootstrapped.
 
 From this directory: `npm ci`, `npm run dev`. Production: `npm run build`, `npm start`.

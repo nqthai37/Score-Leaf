@@ -1,6 +1,6 @@
 # Learner profile and login streak
 
-The top-right avatar opens a profile card with an editable display name, preparation day and daily login streak. Guest visitors see their local plan but are invited to sign in before earning a streak.
+The top-right avatar opens a profile card with an editable display name, preparation day and daily login streak. Learning pages require a signed-in account. Existing device-only progress can be imported after signing in.
 
 - `x` is the inclusive number of calendar days since the start date in study preferences; the start date is day 1. Future plans show day 0. `y` is the configured number of weeks multiplied by seven. Days beyond the plan are shown honestly; only the progress bar is capped.
 - A login day means opening or returning to the app with an authenticated session. A persisted session counts without requiring a password every day. The server computes the date in `profiles.timezone`, defaulting to `Asia/Ho_Chi_Minh`; the browser cannot submit a historical date or a streak value.

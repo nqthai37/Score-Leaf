@@ -31,7 +31,7 @@ Deployments are currently performed with the CLI. GitHub Actions validates pushe
 
 ## Authentication
 
-The public entry page offers email/password login and registration; existing email-link users can sign in from Settings and set a password there. The app uses `@supabase/ssr` cookie clients, a PKCE exchange at `/auth/callback`, and session refresh in Next.js Proxy. Personal learning data is loaded in the account-scoped client adapter; ownership is checked again by PostgreSQL RLS and RPCs. No personalized response uses a shared CDN cache.
+The public entry page offers email/password login and registration; existing email-link users can request a link directly on the public sign-in page, then set a password in Settings. The app uses `@supabase/ssr` cookie clients, a PKCE exchange at `/auth/callback`, and session refresh and authentication checks in Next.js Proxy. All learning routes also sit behind the server layout in `app/(protected)`; signed-out client views are hidden immediately. See [access rules](AUTH_ACCESS.md). Personal learning data is loaded in the account-scoped client adapter; ownership is checked again by PostgreSQL RLS and RPCs. No personalized response uses a shared CDN cache.
 
 Current Supabase Site URL: `https://toeic-path-next-preview.vercel.app/`. Exact allowed callback URLs:
 

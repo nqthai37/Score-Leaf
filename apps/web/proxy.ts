@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { supabaseUrl, supabaseKey } from "./src/lib/supabase/config";
+import { isProtectedPath, signInPath } from "./src/lib/auth-navigation";
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   const supabase = createServerClient(supabaseUrl, supabaseKey, {
@@ -15,8 +16,32 @@ export async function proxy(request: NextRequest) {
       },
     },
   });
-  await supabase.auth.getClaims();
+  const { data, error } = await supabase.auth.getUser();
+  if (isProtectedPath(request.nextUrl.pathname) && (error || !data.user)) {
+    const destination = new URL(
+      signInPath(request.nextUrl.pathname + request.nextUrl.search),
+      request.url,
+    );
+    const redirect = NextResponse.redirect(destination);
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    redirect.headers.set("Cache-Control", "private, no-store");
+    return redirect;
+  }
   response.headers.set("Cache-Control", "private, no-store");
   return response;
 }
-export const config = { matcher: ["/auth/:path*", "/settings"] };
+export const config = {
+  matcher: [
+    "/",
+    "/login",
+    "/auth/:path*",
+    "/dashboard/:path*",
+    "/plan/:path*",
+    "/practice/:path*",
+    "/tests/:path*",
+    "/review/:path*",
+    "/vocabulary/:path*",
+    "/progress/:path*",
+    "/settings/:path*",
+  ],
+};

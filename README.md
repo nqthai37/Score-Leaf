@@ -4,7 +4,7 @@ A personal TOEIC Listening & Reading practice app for building a consistent stud
 
 **[Try the live app](https://toeic-path-next-preview.vercel.app)** · [Source code](https://github.com/nqthai37/toeic-path) · [Development & deployment](docs/DEPLOYMENT.md)
 
-The English welcome page introduces the app beside an email/password **sign-in and sign-up** form. The sign-in page has no guest-practice shortcut.
+The English welcome page introduces the app beside an email/password **sign-in and sign-up** form. A verified account is required to access every learning page, including through direct URLs.
 
 ## What you can do
 
@@ -13,7 +13,7 @@ The English welcome page introduces the app beside an email/password **sign-in a
 - **Listen to natural conversations:** 102 prerecorded HeyGen clips featuring **Faye and Dmitri**, including listening passages, 24 vocabulary items and voice previews. Playback supports speed adjustment without changing the voices.
 - **Follow a personal routine:** choose a preparation length, target and daily study time. Daily suggestions combine due review, areas with enough first-answer evidence and new material.
 - **Build recall:** mistakes return on a 1, 3 and 7-day schedule. Early repetitions do not count as spaced recall.
-- **Keep your work:** resume a saved session, sign in with email and password (or an email link), synchronize account progress and export or merge backups. Guest and account data stay separate unless you explicitly import.
+- **Keep your work:** resume a saved session, sign in with email and password (or an email link), synchronize account progress and export or merge backups. Earlier device-only progress can still be imported explicitly after signing in.
 - **Keep your daily flame:** open your avatar to see your display name, preparation day and consecutive login streak, with one daily flame animation per account.
 - **Understand your progress:** view first answers, repeated practice, spaced recall and estimated active study time separately.
 
@@ -95,6 +95,6 @@ Tests cover content identities and audio integrity, complete-group selection, ac
 
 ## Scope
 
-TOEIC Path is an independent educational portfolio project. It is **not affiliated with ETS**, does not contain official test items and does not provide a calibrated TOEIC score prediction. The mini tests are shorter than the real exam. Active time is an engagement estimate; skill labels and question difficulty are not fully calibrated. Guest answer keys are part of the public learning content, so the app is designed for self-study rather than secure examinations.
+TOEIC Path is an independent educational portfolio project. It is **not affiliated with ETS**, does not contain official test items and does not provide a calibrated TOEIC score prediction. The mini tests are shorter than the real exam. Active time is an engagement estimate; skill labels and question difficulty are not fully calibrated. Practice content is delivered to the browser, so the app is designed for self-study rather than secure examinations.
 
 AI explanations and a React Native client are outside this release. The repository documents the current implementation and verification limits in [deployment notes](docs/DEPLOYMENT.md) and [migration status](docs/migration/STATUS.md).

@@ -1,15 +1,32 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { isProtectedPath, signInPath } from "@/lib/auth-navigation";
 import { Navigation, Breadcrumb } from "./navigation";
 import { useStudy } from "./study-provider";
 import { UserProfile } from "./user-profile";
 export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname(),
-    { ready, user } = useStudy();
+    { ready, user } = useStudy(),
+    router = useRouter();
+  useEffect(() => {
+    if (ready && !user && isProtectedPath(path))
+      router.replace(signInPath(path + window.location.search));
+  }, [ready, user, path, router]);
   if (path === "/" || path === "/login")
     return (
       <main className="auth-main" id="main-content">
         {children}
+      </main>
+    );
+  if (!isProtectedPath(path)) return <main id="main-content">{children}</main>;
+  // Hide both the cached page and navigation immediately after sign-out or expiry.
+  if (!ready || !user)
+    return (
+      <main id="main-content">
+        <p role="status">
+          {ready ? "Redirecting to sign in…" : "Checking your session…"}
+        </p>
       </main>
     );
   return (

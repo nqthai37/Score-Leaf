@@ -43,12 +43,12 @@ try {
   }
   assert.ok(ready, "Production server did not become ready: " + logs);
   const pages = [
-    "/login",
     "/dashboard",
     "/plan",
     "/practice",
-    "/practice/session",
+    "/practice/session?ids=23&kind=part&mode=learning",
     "/practice/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa",
+    "/practice/invalid-attempt",
     "/tests",
     "/review",
     "/vocabulary",
@@ -57,28 +57,52 @@ try {
   ];
   const results = await Promise.allSettled(
     pages.map(async (path) => {
-      for (let visit = 0; visit < 2; visit++) {
-        const result = await fetch(origin + path);
-        assert.equal(result.status, 200, path);
-        const html = await result.text();
-        assert.ok(html.includes("TOEIC Path"), path + " project identity");
-        assert.ok(
-          !html.includes("Available on the current site"),
-          path + " no migration placeholders",
+      for (const headers of [{}, { RSC: "1", "Next-Router-Prefetch": "1" }]) {
+        const response = await fetch(origin + path, {
+          redirect: "manual",
+          headers,
+        });
+        assert.equal(
+          response.status,
+          307,
+          path + " must reject anonymous page and client-navigation requests",
         );
-        assert.ok(
-          !html.includes("/js/app.js"),
-          path + " must not bootstrap the legacy DOM app",
+        const location = new URL(response.headers.get("location"), origin);
+        assert.equal(location.origin, new URL(origin).origin);
+        assert.equal(location.pathname, "/login");
+        assert.equal(location.searchParams.get("next"), path);
+        assert.match(
+          response.headers.get("cache-control"),
+          /private.*no-store/,
         );
-        if (path.includes("/practice/a"))
-          assert.match(result.headers.get("cache-control"), /private|no-store/);
+        assert.doesNotMatch(
+          await response.text(),
+          /quiz-card|id="sidebar"/,
+          "Protected content must not reach anonymous visitors",
+        );
       }
-      return path;
     }),
   );
-  for (const result of results) {
+  for (const result of results)
     if (result.status === "rejected") throw result.reason;
-  }
+  const forged = await fetch(origin + "/progress", {
+    redirect: "manual",
+    headers: {
+      cookie:
+        "sb-znklwghqiielgzbgfqtv-auth-token=base64-e30; toeic-path-auth-v1=true",
+    },
+  });
+  assert.equal(
+    forged.status,
+    307,
+    "A forged or incomplete session cannot authorize a private page",
+  );
+  const head = await fetch(origin + "/dashboard", {
+    method: "HEAD",
+    redirect: "manual",
+  });
+  assert.equal(head.status, 307, "HEAD requests require authentication too");
+  assert.equal((await fetch(origin + "/login")).status, 200);
   const root = await fetch(origin + "/", { redirect: "manual" });
   assert.equal(root.status, 200);
   const landing = await root.text();
@@ -94,12 +118,6 @@ try {
     "The sign-in page must not offer guest practice",
   );
   assert.equal((await fetch(origin + "/missing-page")).status, 404);
-  const invalid = await fetch(origin + "/practice/invalid-attempt");
-  assert.ok([200, 404].includes(invalid.status));
-  assert.ok(
-    (await invalid.text()).includes("This page is not here."),
-    "Streamed invalid sessions render the not-found view",
-  );
   const callback = await fetch(
     origin + "/auth/callback?next=https://example.com",
     { redirect: "manual" },
@@ -107,7 +125,7 @@ try {
   assert.equal(callback.status, 303);
   assert.equal(
     new URL(callback.headers.get("location"), origin).pathname,
-    "/settings",
+    "/login",
   );
   assert.equal(
     new URL(callback.headers.get("location"), origin).search,
@@ -126,7 +144,7 @@ try {
     /<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/,
   );
   console.log(
-    "PASS: direct and repeated requests to all Next.js routes, private session cache, redirects, callback hygiene, 404 and SVG asset.",
+    "PASS: private page/HEAD/RSC redirects, forged-session rejection, return paths, public login, callback hygiene, 404 and assets.",
   );
 } finally {
   if (server && server.exitCode === null && server.signalCode === null) {
