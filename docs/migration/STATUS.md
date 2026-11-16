@@ -43,3 +43,11 @@ Project root: apps/web. Node 22.x configured, Next.js preset. No environment var
 ## Next action after N1
 
 N2 should port pure domain modules incrementally, run baseline parity tests against selection/planning/import/review/activity behavior and preserve all IDs/versions. Then N3 must prove guest listening/reading → submit → results → reload/resume and stable player/timer cleanup before any production replacement.
+
+## Branch cleanup — 16/11/2026
+
+- Removed four unused CSS class families (including their responsive rules) from the Next.js-only stylesheet; legacy CSS copies and the baseline stay byte-identical.
+- Added a focused VS Code workspace for Next.js, Supabase and migration docs. Cache/dependency folders are excluded from its Explorer/search view.
+- Removed 87.6 MiB of local generated output: `dist`, `apps/web/.next`, `apps/web/tsconfig.tsbuildinfo` and `src/vendor`. Each target was checked to be ignored, untracked, inside the repository and free of linked descendants before removal. npm commands regenerate them; dependencies, local environment files and Vercel credentials were retained.
+- Baseline/inventory/CSS-copy checks, preview content test, TypeScript, production build and route checks passed; baseline also passed after artifact deletion.
+- Retained `src`, root tests/build scripts, audio assembly/provenance and Supabase migrations: each is still referenced by the current application, CI, inventory generation or later parity work. N1 does not replace the learning runtime yet.

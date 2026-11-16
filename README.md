@@ -2,11 +2,27 @@
 
 Website luyện TOEIC Listening & Reading với 246 câu hỏi, 10 đề riêng biệt, lộ trình 4/8/12 tuần, sổ lỗi sai và thẻ từ vựng Anh–Việt. Tiến độ lưu trong trình duyệt; có thể xuất và nhập bản sao JSON trong Study preferences.
 
+## Mở ứng dụng Next.js trong VS Code
+
+Trên nhánh `migration/nextjs-foundation`, mở **[TOEIC Path.code-workspace](TOEIC%20Path.code-workspace)** bằng File → Open Workspace from File. Workspace hiển thị Next.js, Supabase và tài liệu migration; ẩn dependency/cache khỏi Explorer.
+
+Ứng dụng Next.js nằm trong `apps/web`. Chạy từ root repository:
+
+```bash
+npm --prefix apps/web ci
+npm run web:dev
+```
+
+Preview: https://toeic-path-next-preview.vercel.app. Hiện mới hoàn thành N0–N1; `src/`, tests và công cụ bản Pages vẫn là nguồn học liệu, baseline và rollback cho N2–N5. Chỉ xóa từng phần sau khi có chức năng thay thế và kiểm tra tương đương. Xem [trạng thái migration](docs/migration/STATUS.md).
+
 ## Cấu trúc thư mục
 
 ```text
 toeic-path/
-├── src/                         # Mã nguồn: chỉnh sửa tại đây
+├── apps/web/                    # Ứng dụng Next.js App Router + TypeScript
+├── supabase/                    # Schema, migrations và seed dùng chung
+├── docs/migration/              # Baseline và trạng thái migration
+├── src/                         # Bản Pages: học liệu và hành vi đang được kế thừa
 │   ├── index.html               # Khung trang và thứ tự tải script
 │   ├── styles/
 │   │   ├── main.css             # Giao diện chung và responsive
@@ -98,7 +114,7 @@ Giữ tốc độ/pitch nguồn khi ghép, thêm 0.18 giây giữa các lượt.
 
 ## Kế hoạch React Native + Supabase
 
-Xem [kế hoạch migration](docs/REACT_NATIVE_SUPABASE_PLAN.md): Expo/React Native/TypeScript, Supabase Auth/Postgres/Storage, RLS, chấm bài phía server, đồng bộ offline và nhập tiến độ từ web. Dự kiến MVP 2–4 tuần cho một lập trình viên, điều chỉnh sau PoC và chưa gồm xét duyệt app store. Hiện mới lập kế hoạch, chưa tạo app native hay project Supabase.
+Xem [kế hoạch migration](docs/REACT_NATIVE_SUPABASE_PLAN.md): Expo/React Native/TypeScript, Supabase Auth/Postgres/Storage, RLS, chấm bài phía server, đồng bộ offline và nhập tiến độ từ web. Dự kiến MVP 2–4 tuần cho một lập trình viên, điều chỉnh sau PoC và chưa gồm xét duyệt app store. App native chưa triển khai; Supabase đã phục vụ bản web. Lộ trình hiện tại ưu tiên Next.js trước mobile, xem docs/migration/STATUS.md.
 
 ## Lịch sử chức năng
 

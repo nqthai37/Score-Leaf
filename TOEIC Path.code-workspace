@@ -1,0 +1,33 @@
+{
+  "folders": [
+    {
+      "name": "Next.js app",
+      "path": "apps/web"
+    },
+    {
+      "name": "Supabase backend",
+      "path": "supabase"
+    },
+    {
+      "name": "Migration docs",
+      "path": "docs/migration"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.next": true,
+      "**/.vercel": true,
+      "**/*.tsbuildinfo": true,
+      "**/next-env.d.ts": true,
+      "**/__pycache__": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/.next": true,
+      "**/.vercel": true,
+      "**/*.tsbuildinfo": true,
+      "**/__pycache__": true
+    }
+  }
+}
