@@ -1,7 +1,7 @@
 # Next.js migration status
 
 Updated 16/11/2026 (Asia/Saigon). Baseline: fd0583286830531c5c365c7fdca00405a8a3e259.
-Branch: migration/nextjs-foundation. Production Pages remains on main.
+N0–N1 developed on migration/nextjs-foundation; integrated into main on 16/11/2026. The Pages workflow continues serving the existing learning application from main; Next.js remains the separate Vercel preview.
 
 | Milestone | Actual status |
 | --- | --- |
@@ -31,7 +31,7 @@ User selected Vercel and completed a fresh device authorization for the official
 - Stable preview: https://toeic-path-next-preview.vercel.app
 - Immutable deployment: https://toeic-path-next-preview-5huw3nyps-nqthai37s-projects.vercel.app
 - Deployment ID: `dpl_BiNqS9LWDMoXoPV7JtCkZ7xvLH1m`, READY on 16/11/2026.
-- Deployed application source: `598963fa1df56458eba15960ce6fb6c14860ab1a` (later branch commits update documentation only).
+- Deployed application source: `598963fa1df56458eba15960ce6fb6c14860ab1a` (the following cleanup removes unused preview CSS and adds the focused workspace).
 - GitHub Actions run `43753732222`: both `test` and `next-preview` passed.
 - Hosted `PREVIEW_BASE_URL=https://toeic-path-next-preview.vercel.app npm run test:routes`: passed, including direct/repeated route loads, callback, private session cache, 404/not-found view and SVG.
 - Browser: test-library navigation/refresh, dynamic session placeholder and dashboard artwork observed on Vercel; screenshot stored in workspace artifacts/previews/nextjs-vercel-preview.png.
@@ -51,3 +51,9 @@ N2 should port pure domain modules incrementally, run baseline parity tests agai
 - Removed 87.6 MiB of local generated output: `dist`, `apps/web/.next`, `apps/web/tsconfig.tsbuildinfo` and `src/vendor`. Each target was checked to be ignored, untracked, inside the repository and free of linked descendants before removal. npm commands regenerate them; dependencies, local environment files and Vercel credentials were retained.
 - Baseline/inventory/CSS-copy checks, preview content test, TypeScript, production build and route checks passed; baseline also passed after artifact deletion.
 - Retained `src`, root tests/build scripts, audio assembly/provenance and Supabase migrations: each is still referenced by the current application, CI, inventory generation or later parity work. N1 does not replace the learning runtime yet.
+
+## Main integration — 16/11/2026
+
+- Reviewed the cleanup and retained all still-used legacy learning/domain/audio sources and Supabase migrations.
+- Integrated the foundation and focused workspace into main; no generated build artifacts or local credentials are tracked.
+- Validation workflow now also runs on pushes to main, so the Next.js app continues receiving build/type/route checks after integration. The existing Pages deployment workflow stays in place.

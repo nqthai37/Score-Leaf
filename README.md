@@ -4,7 +4,7 @@ Website luyện TOEIC Listening & Reading với 246 câu hỏi, 10 đề riêng 
 
 ## Mở ứng dụng Next.js trong VS Code
 
-Trên nhánh `migration/nextjs-foundation`, mở **[TOEIC Path.code-workspace](TOEIC%20Path.code-workspace)** bằng File → Open Workspace from File. Workspace hiển thị Next.js, Supabase và tài liệu migration; ẩn dependency/cache khỏi Explorer.
+Bản Next.js N0–N1 được ghép vào `main` từ nhánh `migration/nextjs-foundation`. Mở **[TOEIC Path.code-workspace](TOEIC%20Path.code-workspace)** bằng File → Open Workspace from File. Workspace hiển thị Next.js, Supabase và tài liệu migration; ẩn dependency/cache khỏi Explorer.
 
 Ứng dụng Next.js nằm trong `apps/web`. Chạy từ root repository:
 
